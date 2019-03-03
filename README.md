@@ -13,13 +13,28 @@ Bu çıkarımları yapabilmek için de istatistiksel veri görselleştirme araç
 Son olarak, elde ettiğimiz bulguları migren hastalarının yaşam kalitesinin artması 
 için başağrısı uzmanları ile paylaşmayı planlamaktayız.
 
-
+## Kurulum
+Kullanacağımız paketleri kurmamız gerekiyor: 
 ```
-## rtweet paketinin kurulumu
+## rtweet, dplyr ve lubridate paketlerinin kurulumu
 install.packages("rtweet")
+install.packages("dplyr")
+install.packages("lubridate")
 
-## paketin yüklenmesi
+## paketlerin yüklenmesi
 library(rtweet)
-}
+library(dplyr)
+library(lubridate)
+```
+
+## Kullanım
+rtweet paketi Twitter developer hesabına gerek kalmadan veri çekmemize yardımcı oluyor. Tek gereken Twitter hesabı(kullanıcı adı ve şifre). 
+
+## Migren Kelimesi Geçen Tweetleri Çekmek
+```
+##search_tweets() fonksiyonuyla migren kelimesi geçen tweetleri migo değişkenine atadım. 
+migo <- search_tweets(
+  q="migren", n=18000 ,retryonratelimit = TRUE, include_rts = FALSE
+)
 ```
 
