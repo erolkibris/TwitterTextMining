@@ -15,7 +15,7 @@ için başağrısı uzmanları ile paylaşmayı planlamaktayız.
 
 ## Kurulum
 Kullanacağımız paketleri kurmamız gerekiyor: 
-```
+```R
 ## rtweet, dplyr ve lubridate paketlerinin kurulumu
 install.packages("rtweet")
 install.packages("dplyr")
@@ -31,7 +31,7 @@ library(lubridate)
 rtweet paketi Twitter developer hesabına gerek kalmadan veri çekmemize yardımcı oluyor. Tek gereken Twitter hesabı(kullanıcı adı ve şifre). 
 
 ## Migren Kelimesi Geçen Tweetleri Çekmek
-```
+```R
 ##search_tweets() fonksiyonuyla migren kelimesi geçen tweetleri migo değişkenine atadım. 
 migo <- search_tweets(
   q="migren", n=18000 ,retryonratelimit = TRUE, include_rts = FALSE
