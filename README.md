@@ -32,9 +32,32 @@ rtweet paketi Twitter developer hesabına gerek kalmadan veri çekmemize yardım
 
 ## Migren Kelimesi Geçen Tweetleri Çekmek
 ```R
-##search_tweets() fonksiyonuyla migren kelimesi geçen tweetleri migo değişkenine atadım. 
+## search_tweets() fonksiyonuyla migren kelimesi geçen tweetleri migo değişkenine atadım. 
 migo <- search_tweets(
   q="migren", n=18000 ,retryonratelimit = TRUE, include_rts = FALSE
 )
 ```
+```R
+## listeyi data frame olarak kaydettim.
+migren_df <- as.data.frame(migo)
+```
+## Türkçe Tweetleri Çekme
 
+Türkçe tweetleri toplamak ve data frame'in gereken sütunlarını görmek için:
+
+```R
+## migren_df'den sadece status_id, created_at, text ve location sütunlarını ve Türkçe tweetleri alacağım
+migren_tr <- migren_df %>%
+  select(status_id, created_at, text, location)%>%
+  filter(migren_df$lang =="tr")%>%
+  arrange(migren_tr$created_at)
+```
+
+```R
+## created_at sütununda veri tarih ve saat şeklinde. Saat ve tarihi ayırmak gerekli
+migren_tr$date <- as.Date(migren_tr$created_at)
+migren_tr$time <- format(migren_tr$created_at,"%H:%M:%S")
+
+## Haftanın günlerini day sütununa ekledim.
+migren_tr$day <- wday(migren_tr$date,label = TRUE)
+```
