@@ -13,3 +13,13 @@ Bu çıkarımları yapabilmek için de istatistiksel veri görselleştirme araç
 Son olarak, elde ettiğimiz bulguları migren hastalarının yaşam kalitesinin artması 
 için başağrısı uzmanları ile paylaşmayı planlamaktayız.
 
+
+```
+## rtweet paketinin kurulumu
+install.packages("rtweet")
+
+## paketin yüklenmesi
+library(rtweet)
+}
+```
+
