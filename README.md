@@ -52,7 +52,7 @@ migren_tr <- migren_df %>%
   filter(migren_df$lang =="tr")%>%
   arrange(migren_tr$created_at)
 ```
-
+## date, time ve day Sütunlarını Oluşturma
 ```R
 ## created_at sütununda veri tarih ve saat şeklinde. Saat ve tarihi ayırmak gerekli
 migren_tr$date <- as.Date(migren_tr$created_at)
