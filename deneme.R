@@ -27,5 +27,5 @@ migren_tr$time <- format(migren_tr$created_at,"%H:%M:%S")
 
 migren_tr$day <- wday(migren_tr$date,label = TRUE)
 
-
+save(migren_tr, file = "migren_tr.RData")
   
