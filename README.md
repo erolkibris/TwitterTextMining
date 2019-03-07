@@ -101,8 +101,10 @@ cities <- data.frame("Cities" = c("İstanbul","Ankara", "İzmir", "Bursa", "Diğ
 cities$perc <- cities$Frequency / sum(cities$Frequency)*100
 cities$perc
 ```
+Twitter'da konum belirtme isteğe bağlıdır. Twitter kullanıcıların çoğu büyük şehirlerde yaşayanlardır. Migrenle ilgili atılan tweetlerin konuma göre yüzdesi aşağıdaki gibidir. Diğer kısmında yeri belirtmemiş ve anlamlı yer belirtmemiş kişilerdir.
+
 ```R
-   Cities Frequency      perc
+   Cities Frequency      Perc
 1 İstanbul       134 11.996419
 2   Ankara        41  3.670546
 3    İzmir        47  4.207699
@@ -121,4 +123,4 @@ ggplot(data = cities)+
 ```
 ![Şehirler](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/Cities.jpeg)
 
-Diğer kısmında konumlarını belirtmeyen, farklı şehirlerden ve ülkelerden atılan tweetler var
+
