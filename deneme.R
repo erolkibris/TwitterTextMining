@@ -43,14 +43,18 @@ ank <- sum(migren_tr$location %s/% 'Ankara')
 izm <- sum(migren_tr$location %s/% 'İzmir')
 bur <- sum(migren_tr$location %s/% 'Bursa')
 
-cities <- data.frame("Cities" = c("İstanbul","Ankara", "İzmir", "Bursa", "Diğer"), "Frequency" = c(ist, ank, izm, bur, 1117 - (ist+ank+izm+bur)))
+cities <- data.frame("Cities" = c("İstanbul","Ankara", "İzmir", "Bursa", "Diğer"), 
+                     "Frequency" = c(ist, ank, izm, bur, 1117 - (ist+ank+izm+bur)))
 
-graph <- ggplot(cities, aes(Cities))+
-  geom_bar(aes(y=(..count..)/sum(cities$Frequency)))+
-  scale_y_continuous(labels=scales::percent)+
+cities$perc <- cities$Frequency / sum(cities$Frequency)*100
+
+ggplot(data = cities)+
+  aes(x=Cities, y = perc)+
+  geom_bar(stat="identity")+
+  theme(panel.background = element_rect(fill = "white"))+
+  labs(title = "Şehirlere göre atılan tweetler")+
+  xlab("Şehirler")+
   ylab("Yüzdeler")
-
-graph
 
 
   
