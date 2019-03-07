@@ -121,6 +121,6 @@ ggplot(data = cities)+
   xlab("Şehirler")+
   ylab("Yüzdeler")
 ```
-![Şehirler](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/Cities.jpeg)
+![Şehirler](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/sehir-tweet.jpeg)
 
 
