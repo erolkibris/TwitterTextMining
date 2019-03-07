@@ -101,7 +101,8 @@ cities <- data.frame("Cities" = c("İstanbul","Ankara", "İzmir", "Bursa", "Diğ
 cities$perc <- cities$Frequency / sum(cities$Frequency)*100
 cities$perc
 ```
-##    Cities Frequency      perc
+##   
+   Cities Frequency      perc
 1 İstanbul       134 11.996419
 2   Ankara        41  3.670546
 3    İzmir        47  4.207699
