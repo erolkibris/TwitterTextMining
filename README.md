@@ -98,8 +98,8 @@ bur <- sum(migren_tr$location %s/% 'Bursa')
 cities <- data.frame("Cities" = c("İstanbul","Ankara", "İzmir", "Bursa", "Diğer"), 
                      "Frequency" = c(ist, ank, izm, bur, 1117 - (ist+ank+izm+bur)))
 
-cities$perc <- cities$Frequency / sum(cities$Frequency)*100
-cities$perc
+cities$Perc <- cities$Frequency / sum(cities$Frequency)*100
+cities$Perc
 ```
 Twitter'da konum belirtme isteğe bağlıdır. Twitter kullanıcıların çoğu büyük şehirlerde yaşayanlardır. Migrenle ilgili atılan tweetlerin konuma göre yüzdesi aşağıdaki gibidir. Diğer kısmında yeri belirtmemiş ve anlamlı yer belirtmemiş kişilerdir.
 
@@ -114,8 +114,8 @@ Twitter'da konum belirtme isteğe bağlıdır. Twitter kullanıcıların çoğu 
 ## Hangi şehirde ne kadar tweet atılmış?
 ```R
 ggplot(data = cities)+
-  aes(x=Cities, y = perc)+
-  geom_bar(stat="identity")+
+  aes(x=Cities, y = Perc)+
+  geom_bar(stat="identity",fill="light blue")+
   theme(panel.background = element_rect(fill = "white"))+
   labs(title = "Şehirlere göre atılan tweetler")+
   xlab("Şehirler")+
