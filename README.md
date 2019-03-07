@@ -83,7 +83,7 @@ cities <- data.frame("Cities" = c("İstanbul","Ankara", "İzmir", "Bursa", "Diğ
 
 cities$perc <- cities$Frequency / sum(cities$Frequency)*100
 ```
-## Hangi şehirde ne kadar tweet atılmış
+## Hangi şehirde ne kadar tweet atılmış?
 ```R
 ggplot(data = cities)+
   aes(x=Cities, y = perc)+
