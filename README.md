@@ -101,7 +101,12 @@ cities <- data.frame("Cities" = c("İstanbul","Ankara", "İzmir", "Bursa", "Diğ
 cities$perc <- cities$Frequency / sum(cities$Frequency)*100
 cities$perc
 ```
-
+##    Cities Frequency      perc
+1 İstanbul       134 11.996419
+2   Ankara        41  3.670546
+3    İzmir        47  4.207699
+4    Bursa        22  1.969561
+5    Diğer       873 78.155774
 
 ## Hangi şehirde ne kadar tweet atılmış?
 ```R
