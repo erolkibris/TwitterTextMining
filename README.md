@@ -16,28 +16,39 @@ için baş ağrısı uzmanları ile paylaşmayı planlamaktayız.
 ## Kurulum
 Kullanacağımız paketleri kurmamız gerekiyor: 
 ```R
-## rtweet, dplyr ve lubridate paketlerinin kurulumu
+## rtweet Twitter'dan veri çekmek için 
+## dplyr veri düzenlemesi için
+## lubridate tarih ve saat değişkenleri için
+## ggplot2 grafik çizimi için
+
+## paketlerin kurulumu
 install.packages("rtweet")
 install.packages("dplyr")
 install.packages("lubridate")
+install.packages("ggplot2")
+install.packages("plyr")
 
-## paketlerin yüklenmesi
+## paketlerin aktivasyonu
 library(rtweet)
 library(dplyr)
 library(lubridate)
 library(ggplot2)
+library(plyr)
 
 ```
 
 ## Kullanım
-rtweet paketi Twitter developer hesabına gerek kalmadan veri çekmemize yardımcı oluyor. Tek gereken Twitter hesabı(kullanıcı adı ve şifre). 
+R rtweet paketi Twitter developer hesabına gerek kalmadan veri çekmemize yardımcı oluyor. Tek gereken Twitter hesabı (kullanıcı adı ve şifre). 
 
 ## Migren Kelimesi Geçen Tweetleri Çekmek
+search_tweets fonksiyonu programı çalıştırdıktan 10 gün öncesine kadar veri toplar.
 ```R
 ## search_tweets() fonksiyonuyla migren kelimesi geçen tweetleri migo değişkenine atadım. 
 migo <- search_tweets(
   q="migren", n=18000 ,retryonratelimit = TRUE, include_rts = FALSE
 )
+## q değişkeni istediğimiz kelimenin geçtiği tweetleri, 
+## n değişkeni tweet sayısını belirtir.
 ```
 ```R
 ## listeyi data frame olarak kaydettim.
@@ -52,14 +63,18 @@ Türkçe tweetleri toplamak ve data frame'in gereken sütunlarını görmek içi
 migren_tr <- migren_df %>%
   select(status_id, created_at, text, location)%>%
   filter(migren_df$lang =="tr")%>%
-  arrange(migren_tr$created_at)
+  arrange(migren_tr$created_at) 
+  ## arrange fonksiyonu created_at sütununu artan şekilde sıralıyor
 ```
 ## date, time ve day Sütunlarını Oluşturma
 ```R
-## created_at sütununda veri tarih ve saat şeklinde. Saati yuvarlayıp created_at sütununa kaydettik
+## created_at sütununda veri tarih ve saat şeklinde birleşik. 
+## Saati yuvarlayıp created_at sütununa kaydettik.
+
 migren_tr$created_at <- round_date(migren_tr$created_at, "hour", week_start = getOption("lubridate.week.start",7))
 
-## date, time ve day sütunlarını oluşturduk
+## Tarih, saat ve haftanın hangi günü olduğunu dair yeni sütunları oluşturduk.
+
 migren_tr$date <- as.Date(migren_tr$created_at)
 migren_tr$time <- format(migren_tr$created_at, "%H")
 migren_tr$day <- wday(migren_tr$date,label = TRUE)
@@ -84,6 +99,14 @@ cities <- data.frame("Cities" = c("İstanbul","Ankara", "İzmir", "Bursa", "Diğ
                      "Frequency" = c(ist, ank, izm, bur, 1117 - (ist+ank+izm+bur)))
 
 cities$perc <- cities$Frequency / sum(cities$Frequency)*100
+```
+```	
+    Cities Frequency      perc
+1 İstanbul       134 11.996419
+2   Ankara        41  3.670546
+3    İzmir        47  4.207699
+4    Bursa        22  1.969561
+5    Diğer       873 78.155774
 ```
 ## Hangi şehirde ne kadar tweet atılmış?
 ```R
