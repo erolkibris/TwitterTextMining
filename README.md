@@ -25,6 +25,8 @@ install.packages("lubridate")
 library(rtweet)
 library(dplyr)
 library(lubridate)
+library(ggplot2)
+
 ```
 
 ## Kullanım
