@@ -94,3 +94,5 @@ ggplot(data = cities)+
   ylab("Yüzdeler")
 ```
 ![Şehirler](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/Cities.jpeg)
+
+Diğer kısmında konumlarını belirtmeyen, farklı şehirlerden ve ülkelerden atılan tweetler var
