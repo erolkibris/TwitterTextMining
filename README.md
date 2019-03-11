@@ -54,6 +54,12 @@ migo <- search_tweets(
 ## listeyi data frame olarak kaydettim.
 migren_df <- as.data.frame(migo)
 ```
+## Veriyi Görmek İçin
+```R
+githubURL <- "https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/migren_tr.RData"
+load(url(githubURL))
+head(df)
+```
 ## Türkçe Tweetleri Çekme
 
 Türkçe tweetleri toplamak ve data frame'in gereken sütunlarını görmek için:
