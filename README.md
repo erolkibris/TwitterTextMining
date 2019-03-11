@@ -131,3 +131,5 @@ ggplot(data = cities)+
 ![Şehirler](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/sehir-tweet.jpeg)
 
 
+
+
