@@ -58,7 +58,7 @@ migren_df <- as.data.frame(migo)
 ## Veriyi Görmek İçin
 ```R
 ## Veriyi indirmeden aşağıdaki kodlarla veriyi görebilirsiniz.
-githubURL <- "https://github.com/erolkibris/TwitterDuyguAnalizi/tree/master/data"
+githubURL <- "https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/data/migren_tr.RData"
 load(url(githubURL))
 head(df)
 ```
