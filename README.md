@@ -168,3 +168,58 @@ head(x)
 5    4   2   2   5   1   2   5   0 2.428571   12     5
 6    5   4   4   3   9   2   7   0 4.142857   22     7
 ```
+
+## ShinyApp 
+Shiny kütüphanesini kullanarak dinamik grafikler elde ettik. Kullanıcıya günlere göre atılan tweetleri çizgi grafik aracılığıyla görselleştirdik. Shiny uygulaması 2 kısımdan oluşuyor. Kullanıcı arayüzü ve server kısmı. ui kısmı kullanıcının seçimleri ve grafiği gördüğü kısım, server arka planda çalışarak grafiği çizdirmek için gerekli
+
+```R
+#shiny uygulama için gerekli
+#ggplot2 grafik için
+#reshape2 veriyi görselleştirmek için düzenlemede gerekli
+library(shiny)
+library(ggplot2)
+library(reshape2)
+
+ui <- fluidPage(
+  title = "Gün-Tweet Sayısı,",
+  titlePanel("Gün ve Saate Göre Atılan Tweet Sayısı"),
+  sidebarLayout(
+    sidebarPanel(
+    #Onay kutucukları kullanıcıya gün seçimini sağlıyor
+      checkboxGroupInput("gun", 
+                         h1("Gunu seciniz."), 
+                         choices = list("Pazartesi" = "Pzt", "Sali" = "Sal",
+                                        "Carsamba" = "Car", "Persembe" = "Per",
+                                        "Cuma" = "Cum", "Cumartesi" = "Cmt", 
+                                        "Pazar" ="Paz", "Ortalama" = "Ort",
+                                        "Hafta ici" = "hici", "Hafta sonu" = "hsonu"))
+    ),
+    #grafiğin gösterileceği kısım
+    mainPanel(
+      plotOutput("plot"))
+  )
+)
+
+
+server <- function(input, output, session) {
+  output$plot <- renderPlot({
+    plot.data <- melt(x, id.vars = 'saat')
+    plot.data <- plot.data[plot.data$variable %in% input$gun, ]
+    ggplot(data=plot.data)+
+      geom_line(mapping = aes(x=saat, y= value, colour = variable))+
+      theme_classic()+
+      scale_x_continuous(breaks = c(0:23))+
+      ylab("Tweetler")+
+      xlab("Saat")
+    
+      
+  })
+}
+
+shinyApp(ui = ui, server = server)
+```
+Bu uygulamayı bilgisyarınızda görmek için aşağıdaki komutu RStudio'da çalıştırın. 
+
+```R
+runGitHub("TwitterDuyguAnalizi", "erolkibris")
+```
