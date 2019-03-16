@@ -54,6 +54,7 @@ migo <- search_tweets(
 ## listeyi data frame olarak kaydettim.
 migren_df <- as.data.frame(migo)
 ```
+
 ## Veriyi Görmek İçin
 ```R
 ## Veriyi indirmeden aşağıdaki kodlarla veriyi görebilirsiniz.
@@ -73,6 +74,13 @@ migren_tr <- migren_df %>%
   arrange(migren_tr$created_at) 
   ## arrange fonksiyonu created_at sütununu artan şekilde sıralıyor
 ```
+## Verileri Birleştirmek
+Daha fazla veriyle çalışmak için farklı zamanlarda veriler çekmek gerekti. Bu yüzden çekilen verileri birleştirmek için 
+
+```R
+migren <- rbind(migren_tr, migren_triki[124:1040,])
+```
+
 ## date, time ve day Sütunlarını Oluşturma
 ```R
 ## created_at sütununda veri tarih ve saat şeklinde birleşik. 
@@ -131,5 +139,32 @@ ggplot(data = cities)+
 ![Şehirler](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/sehir-tweet.jpeg)
 
 
+## Gün-Tweet Grafiği
+Bu grafiği ShinyApp olarak yapacağız. Öncelikle gerekli olan verileri data frame haline getiriyoruz. Data frame saatleri, haftanın günlerini, genel ortalamayı, hafta içi ve hafta sonu atılan tweetlerin sayısını içeriyor.
 
-
+```R
+#boş bir data frame oluşturduk
+x <- data.frame(matrix(,nrow = 24, ncol = 9))
+#sütun adlarını verdik
+coln <- c("saat", "Pzt", "Sal", "Car", "Per", "Cum", "Cmt", "Paz", "Ort")
+colnames(x) <- coln
+#saat sütununa saatleri ekledik
+x$saat <- c(0:23)
+#Ort sütununa time_day tablosundan Mean sütununu ekledik
+x$Ort <- time_day$Mean
+#sum_table tablosundan gerekli olan verileri çekiyoruz
+x[,(c("Paz", "Sal", "Car", "Per", "Cum", "Cmt", "Pzt"))]=t(ldply(split(sum_table$Freq, sum_table$Var1))[,-1])
+#hici ve hsonu sütunlarını da tabloya ekliyoruz.
+x$hici <- with(x[,2:6], rowSums(x[,2:6]))
+x$hsonu <- with(x[,7:8], rowSums(x[,7:8]))
+```
+```R
+head(x)
+  saat Pzt Sal Car Per Cum Cmt Paz      Ort hici hsonu
+1    0  17   5  12   3   7   7   5 8.000000   44    12
+2    1   3   5   4   5   3   3   5 4.000000   20     8
+3    2   3   6   4   5   3   0   1 3.142857   21     1
+4    3   2   0   2   5   0   2   1 1.714286    9     3
+5    4   2   2   5   1   2   5   0 2.428571   12     5
+6    5   4   4   3   9   2   7   0 4.142857   22     7
+```
