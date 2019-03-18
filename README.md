@@ -2,84 +2,113 @@
 
 ## Projenin Amacı
 
-Gelişen teknolojiyle birlikte ortaya çıkan sosyal medya araçları farklı disiplerden araştırmacılara, çalışmaları için anlık ve büyük 
-boyutta veri imkanı sunmaktadır. Biz bu çalışmamız da, Türkiye’de yaklaşık olarak 7 milyon kişiyi hem fiziksel hem de
-ruhsal olarak etkiliyen migren rahatsızlığının Twitter’da Türkçe mesajlardan elde edilen veriler doğrultusunda duygu analizini yapmayı 
-planlamaktayız. Çalışmamızda özellikle, Twitter mesajlarında, migren rahatsızlığının üç temel karekteristiği 
-olan, frekansını, süresini ve şiddetini belirtmek için Türkçe Twitter kullanıcıların hangi kelimelerin kullandığı, 
-bu mesajları günün hangi saatinde, haftanın hangi gününde,
-ve yılın hangi ayında daha çok kullanıldığı üzerine çıkarımlar yapmayı ummaktayız.
-Bu çıkarımları yapabilmek için de istatistiksel veri görselleştirme araçlarını kullanmayı planlanmaktayız. 
-Son olarak, elde ettiğimiz bulguları migren hastalarının yaşam kalitesinin artması 
-için baş ağrısı uzmanları ile paylaşmayı planlamaktayız.
-
-## Kurulum
-Kullanacağımız paketleri kurmamız gerekiyor: 
-```R
-## rtweet Twitter'dan veri çekmek için 
-## dplyr veri düzenlemesi için
-## lubridate tarih ve saat değişkenleri için
-## ggplot2 grafik çizimi için
-
-## paketlerin kurulumu
-install.packages("rtweet")
-install.packages("dplyr")
-install.packages("lubridate")
-install.packages("ggplot2")
-install.packages("plyr")
-
-## paketlerin aktivasyonu
-library(rtweet)
-library(dplyr)
-library(lubridate)
-library(ggplot2)
-library(plyr)
-
-```
+Gelişen teknolojiyle birlikte ortaya çıkan sosyal medya araçları farklı disiplerden araştırmacılara, çalışmaları için anlık ve büyük boyutta veri imkanı sunmaktadır. Biz bu çalışmamız da, Türkiye’de yaklaşık olarak 7 milyon kişiyi hem fiziksel hem de ruhsal olarak etkileyen migren rahatsızlığının Twitter’da Türkçe mesajlardan elde edilen veriler doğrultusunda duygu analizini yapmayı planlamaktayız. Çalışmamızda özellikle, Twitter mesajlarında, migren rahatsızlığının üç temel karekteristiği olan, frekansını, süresini ve şiddetini belirtmek için Türkçe Twitter kullanıcıların hangi kelimeleri kullandığı, bu mesajları haftanın hangi gününde ve günün hangi saatinde daha çok kullandığı üzerine çıkarımlar yapmayı ummaktayız. Bu çıkarımları yapabilmek için de istatistiksel veri görselleştirme araçlarını kullanmayı planlanmaktayız. Son olarak, migren hastalarının yaşam kalitesinin artmasına katkıda bulunmak için elde ettiğimiz bulguları için baş ağrısı uzmanları ile paylaşmayı planlamaktayız.
 
 ## Kullanım
-R rtweet paketi Twitter developer hesabına gerek kalmadan veri çekmemize yardımcı oluyor. Tek gereken Twitter hesabı (kullanıcı adı ve şifre). 
+R programı, Twitter developer hesabına gerek kalmadan, Twitter’dan veri çekmemize imkan veriyor. Bu işlemi yapabilmemiz için öncelikli olarak bir Twitter hesabımızın olması gereklidir.
+
+## Gerekli R Paketleri
+Öncelikli olarak kullanacağımız R paketlerini indirmemiz ve kurmamız gerekiyor. İlk etapta R rtweet paketine, Twitter’dan veri çekebilmemiz için ihtiyacımız var. Aşağıda listelenen diğer paketler ise ileriki aşamada sırasıyla ihtiyacımız olan paketler.
+```R
+## R rtweet Twitter'dan veri çekmek için 
+## R dplyr veri düzenlemesi için
+## R roperators metinde bir kelimenin belirli uzantılarını aramak için
+## R ggplot2 grafik çizimi için gerekli
+## R lubridate tarih ve saat değişkenleri üzerinde değişiklik yapabilmek için
+## R plyr veri düzenlemesi için
+
+## Paketlerin kurulumu
+
+install.packages("rtweet")
+install.packages("dplyr")
+install.packages("roperators")
+install.packages("ggplot2")
+install.packages("lubridate")
+install.packages("plyr")
+
+## Paketlerin aktivasyonu
+
+library(rtweet)
+library(dplyr)
+library(roperators)
+library(ggplot2)
+library(lubridate)
+library(plyr)
+```
 
 ## Migren Kelimesi Geçen Tweetleri Çekmek
-search_tweets fonksiyonu programı çalıştırdıktan 10 gün öncesine kadar veri toplar.
+
+R rtweet paketindeki search_tweets fonksiyonu, Twitter’dan 10 gün öncesine kadar veri çekebilmemizi sağlar.
+
 ```R
-## search_tweets() fonksiyonuyla migren kelimesi geçen tweetleri migo değişkenine atadım. 
+## R search_tweets fonksiyonuyla migren kelimesi geçen tweetleri migo R objesine atadım. 
+
 migo <- search_tweets(
-  q="migren", n=18000 ,retryonratelimit = TRUE, include_rts = FALSE
+  q="migren", n=18000, retryonratelimit = TRUE, include_rts = FALSE
 )
-## q değişkeni istediğimiz kelimenin geçtiği tweetleri, 
-## n değişkeni tweet sayısını belirtir.
-```
-```R
-## listeyi data frame olarak kaydettim.
+
+## Burada, q argumanı tweetlerde arayacağımız kelimeyi, 
+## n argumanı ise istenilen tweet sayısını belirtir.
+
+## listeyi data frame olarak kaydelim:
+
 migren_df <- as.data.frame(migo)
 ```
 
-## Veriyi Görmek İçin
-```R
-## Veriyi indirmeden aşağıdaki kodlarla veriyi görebilirsiniz.
-githubURL <- "https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/data/migren_tr.RData"
-load(url(githubURL))
-head(df)
-```
 ## Türkçe Tweetleri Çekme
 
-Türkçe tweetleri toplamak ve data frame'in gereken sütunlarını görmek için:
-
+Elde ettiğimiz ham veride, farklı dillerde de migren kelimesi yer aldığını farkettik. Bu sebeple, sadece dili Türkçe olan tweetleri çekmek ve diğer gerekli bir takım sütunları (mesajın kimlik numarasını, mesajın ne zaman atıldığını, mesajın nereden atıldığını ve mesajın kendisini) çekmek için aşağıdaki kodu kullandık ve Github’da migren_tr ismiyle sakladık.
 ```R
-## migren_df'den sadece status_id, created_at, text ve location sütunlarını ve Türkçe tweetleri alacağım
+## Ham veri olan migren_df'den sadece status_id, created_at, text ve location ## sütunlarını ve Türkçe tweetleri alalım
+
 migren_tr <- migren_df %>%
   select(status_id, created_at, text, location)%>%
   filter(migren_df$lang =="tr")%>%
   arrange(migren_tr$created_at) 
-  ## arrange fonksiyonu created_at sütununu artan şekilde sıralıyor
+
+
+## filter fonksiyonu, Twitter mesajlarini Turkce olanlarini seciyor
+## arrange fonksiyonu, veriyi created_at sütununa göre, yani kronolojik 
+## olarak artan şekilde sıralıyor.
 ```
-## Verileri Birleştirmek
-Daha fazla veriyle çalışmak için farklı zamanlarda veriler çekmek gerekti. Bu yüzden çekilen verileri birleştirmek için 
+## Hangi şehirde ne kadar tweet atılmış?
+Twitter'da yaşanılan yere ait şehir isim bilgisi yani konum belirtme isteğe bağlıdır. Bu sebeple, tüm kullanılara ait konum bilgisi elde etmemiz mükün olmazken, genel olarak bilinen yargı ise Twitter kullanıcıların çoğunun büyük şehirlerde yaşayan genç insanlar olduğudur. Yine bu nedenle, biz de, Türkiye’de 4 büyük şehirden migren ile ilgili ne kadar Tweet atılmış görelim istedik:
 
 ```R
-migren <- rbind(migren_tr, migren_triki[124:1040,])
+## Hangi şehirlerden ne kadar tweet atılmış
+ist <- sum(migren_tr$location %s/% 'stanbul') 
+ank <- sum(migren_tr$location %s/% 'Ankara')
+izm <- sum(migren_tr$location %s/% 'zmir')
+bur <- sum(migren_tr$location %s/% 'Bursa')
 ```
+```R
+##cities data frame oluşturup sıklıklarını ve yüzdelerini yazıyoruz.
+cities <- data.frame("Cities" = c("İstanbul","Ankara", "İzmir", "Bursa", "Diğer"), 
+                     "Frequency" = c(ist, ank, izm, bur, 1117 - (ist+ank+izm+bur)))
+
+cities$Perc <- round(cities$Frequency / sum(cities$Frequency)*100,4)
+cities$Perc
+
+head(cities)
+
+   Cities  Frequency    Perc
+1 İstanbul       284 25.4252
+2   Ankara        78  6.9830
+3    İzmir        91  8.1468
+4    Bursa        33  2.9543
+5    Diğer       631 56.4906
+```
+```R
+ggplot(data = cities)+
+  aes(x=Cities, y = Perc)+
+  geom_bar(stat="identity",fill="light blue")+
+  theme(panel.background = element_rect(fill = "white"))+
+  labs(title = "Şehirlere göre atılan tweetler")+
+  xlab("Şehirler")+
+  ylab("Yüzdeler")
+```
+![Şehirler](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/sehir-tweet.jpeg)
+
 
 ## date, time ve day Sütunlarını Oluşturma
 ```R
@@ -100,43 +129,8 @@ day_freq <- count(migren_tr,'day')
 time_freq <- count(migren_tr, 'time')
 date_freq <- count(migren_tr, 'date')
 ```
-```R
-## Hangi şehirlerden ne kadar tweet atılmış
-ist <- sum(migren_tr$location %s/% 'İstanbul') 
-ank <- sum(migren_tr$location %s/% 'Ankara')
-izm <- sum(migren_tr$location %s/% 'İzmir')
-bur <- sum(migren_tr$location %s/% 'Bursa')
-```
 
-```R
-##cities data frame oluşturup sıklıklarını ve yüzdelerini yazıyoruz.
-cities <- data.frame("Cities" = c("İstanbul","Ankara", "İzmir", "Bursa", "Diğer"), 
-                     "Frequency" = c(ist, ank, izm, bur, 1117 - (ist+ank+izm+bur)))
-
-cities$Perc <- cities$Frequency / sum(cities$Frequency)*100
-cities$Perc
-```
 Twitter'da konum belirtme isteğe bağlıdır. Twitter kullanıcıların çoğu büyük şehirlerde yaşayanlardır. Migrenle ilgili atılan tweetlerin konuma göre yüzdesi aşağıdaki gibidir. Diğer kısmında yeri belirtmemiş ve anlamlı yer belirtmemiş kişilerdir.
-
-```R
-   Cities Frequency      Perc
-1 İstanbul       134 11.996419
-2   Ankara        41  3.670546
-3    İzmir        47  4.207699
-4    Bursa        22  1.969561
-5    Diğer       873 78.155774
-```
-## Hangi şehirde ne kadar tweet atılmış?
-```R
-ggplot(data = cities)+
-  aes(x=Cities, y = Perc)+
-  geom_bar(stat="identity",fill="light blue")+
-  theme(panel.background = element_rect(fill = "white"))+
-  labs(title = "Şehirlere göre atılan tweetler")+
-  xlab("Şehirler")+
-  ylab("Yüzdeler")
-```
-![Şehirler](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/sehir-tweet.jpeg)
 
 
 ## Gün-Tweet Grafiği
