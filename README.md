@@ -89,7 +89,7 @@ bur <- sum(migren_tr$location %s/% 'Bursa')
 ```R
 ##cities data frame oluşturup sıklıklarını ve yüzdelerini yazıyoruz.
 cities <- data.frame("Cities" = c("İstanbul","Ankara", "İzmir", "Bursa", "Diğer"), 
-                     "Frequency" = c(ist, ank, izm, bur, 1117 - (ist+ank+izm+bur)))
+                     "Frequency" = c(ist, ank, izm, bur, dim(migren)[1] - (ist+ank+izm+bur)))
 
 cities$Perc <- round(cities$Frequency / sum(cities$Frequency)*100,4)
 cities$Perc
@@ -255,7 +255,7 @@ tail(sum.table,25)
 191 Ort   22 23.0000
 192 Ort   23 13.2857
 ```
-##Gün-Tweet Shiny Uygulaması
+## Gün-Tweet Shiny Uygulaması
 
 ### Shiny için Veri Düzenlemesi
 ```R
