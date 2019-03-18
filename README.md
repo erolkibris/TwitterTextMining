@@ -16,6 +16,9 @@ R programı, Twitter developer hesabına gerek kalmadan, Twitter’dan veri çek
 ## R ggplot2 grafik çizimi için gerekli
 ## R lubridate tarih ve saat değişkenleri üzerinde değişiklik yapabilmek için
 ## R plyr veri düzenlemesi için
+## R shiny paketi uygulama için gerekli
+## R reshape2 veriyi görselleştirmek için düzenlemede gerekli
+
 
 ## Paketlerin kurulumu
 
@@ -25,6 +28,8 @@ install.packages("roperators")
 install.packages("ggplot2")
 install.packages("lubridate")
 install.packages("plyr")
+install.packages("shiny")
+install.packages("reshape2")
 
 ## Paketlerin aktivasyonu
 
@@ -103,6 +108,7 @@ head(cities)
 5    Diğer       631 56.4906
 ```
 ```R
+#Veriyi görselleştirmek için
 ggplot(data = cities)+
   aes(x=Cities, y = Perc)+
   geom_bar(stat="identity",fill="light blue")+
@@ -112,6 +118,50 @@ ggplot(data = cities)+
   ylab("Yüzdeler")
 ```
 ![Şehirler](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/sehir-tweet.jpeg)
+
+##Saat-Gün-Tweet Sayısı Verisi ve Grafiği
+
+Tweetlerin haftanın hangi günü, günün hangi saatinde atıldığına dair bir çizgi grafik çıkarmak istiyoruz. Fakat, elimizdeki veride, zamana dair sadece “created_at” değişkeni var. Burada, tarih ve saat birleşik olarak verilmiş.
+
+```R
+migren_tr$created_at[1:10]
+
+ [1] "2019-02-18 08:27:04 UTC" "2019-02-18 11:54:36 UTC" "2019-02-18 13:09:33 UTC"
+ [4] "2019-02-18 13:21:51 UTC" "2019-02-18 13:39:16 UTC" "2019-02-18 13:55:46 UTC"
+ [7] "2019-02-18 14:14:24 UTC" "2019-02-18 14:14:33 UTC" "2019-02-18 14:46:28 UTC"
+[10] "2019-02-18 15:57:14 UTC"
+```
+
+R lubridate paketi bize, “created_at” değişkeninden öncelikle saatleri çekip ve yuvarlayıp, sonrasında da, tarih kısmından saati ve günü çıkarmamıza yardımcı oluyor.
+
+```R
+migren_tr$created_at <- round_date(migren_tr$created_at, "hour", week_start = getOption("lubridate.week.start",7))
+
+## created_at sütununda veri tarih ve saat şeklinde birleşik. 
+## Saati yuvarlayıp created_at sütununa kaydettik.
+
+migren_tr$date <- as.Date(migren_tr$created_at)
+migren_tr$time <- format(migren_tr$created_at, "%H")
+migren_tr$day <- wday(migren_tr$date,label = TRUE)
+```
+
+Artık verimizde, hem tarih, hem gün hem de saat ayrı ayrı mevcut.
+
+```R
+head(migren_tr[,c("date","time", "day")],10)
+
+       date   time day
+1  2019-02-18   08 Pzt
+2  2019-02-18   12 Pzt
+3  2019-02-18   13 Pzt
+4  2019-02-18   13 Pzt
+5  2019-02-18   14 Pzt
+6  2019-02-18   14 Pzt
+7  2019-02-18   14 Pzt
+8  2019-02-18   14 Pzt
+9  2019-02-18   15 Pzt
+10 2019-02-18   16 Pzt
+```
 
 
 ## date, time ve day Sütunlarını Oluşturma
@@ -127,47 +177,108 @@ migren_tr$date <- as.Date(migren_tr$created_at)
 migren_tr$time <- format(migren_tr$created_at, "%H")
 migren_tr$day <- wday(migren_tr$date,label = TRUE)
 ```
-## Gün, saat ve tarihlerin sıklıkları
+Haftanın hangi gününde, saat kaçta, kaç tane tweet atıldığına dair biz çizgi grafiği elde etmek istiyoruz. Sonrasında, bu grafiği R Shiny uygulamasını kullanarak dinamik hale geritereceğiz. Bu sebeple, öncelikle, gerekli olan veriyi yani haftanın hangi gününde, hangi saatte kaç tane Tweet atıldığını çıkaralım.
+
 ```R
-day_freq <- count(migren_tr,'day')
-time_freq <- count(migren_tr, 'time')
-date_freq <- count(migren_tr, 'date')
+sum_table <- as.data.frame(table(migren_tr$day,migren_tr$time))
+colnames(sum_table) <- c("day", "time", "Freq")
+
+sum_table <- sum_table %>%
+             arrange(day)
 ```
-
-Twitter'da konum belirtme isteğe bağlıdır. Twitter kullanıcıların çoğu büyük şehirlerde yaşayanlardır. Migrenle ilgili atılan tweetlerin konuma göre yüzdesi aşağıdaki gibidir. Diğer kısmında yeri belirtmemiş ve anlamlı yer belirtmemiş kişilerdir.
-
-
-## Gün-Tweet Grafiği
-Bu grafiği ShinyApp olarak yapacağız. Öncelikle gerekli olan verileri data frame haline getiriyoruz. Data frame saatleri, haftanın günlerini, genel ortalamayı, hafta içi ve hafta sonu atılan tweetlerin sayısını içeriyor.
+```R
+head(sum_table, 25)
+   day  time Freq
+1  Paz   00    5
+2  Paz   01    5
+3  Paz   02    1
+4  Paz   03    1
+5  Paz   04    0
+6  Paz   05    0
+7  Paz   06    5
+8  Paz   07    7
+9  Paz   08    4
+10 Paz   09    6
+11 Paz   10    3
+12 Paz   11   10
+13 Paz   12    7
+14 Paz   13    5
+15 Paz   14    5
+16 Paz   15    7
+17 Paz   16    8
+18 Paz   17    8
+19 Paz   18    7
+20 Paz   19   13
+21 Paz   20   15
+22 Paz   21   22
+23 Paz   22   19
+24 Paz   23   12
+25 Pzt   00    5
+```
+Saat bazında atılan Tweetlerin 7 gün üzerinden ortalamasını hesaplayıp, yeni bir veri seti oluşturduk.
 
 ```R
-#boş bir data frame oluşturduk
+sum_table2 <- sum_table %>%
+    group_by(time) %>%
+    summarize(Freq=round(mean(Freq),4)) 
+sum_table2$day <- "Ort"
+ 
+sum.table <- rbind(sum_table,sum_table2)
+
+tail(sum.table,25)
+```
+```R
+    day  time  Freq
+168 Cmt   23 11.0000
+169 Ort   00  8.0000
+170 Ort   01  4.0000
+171 Ort   02  3.1429
+172 Ort   03  1.7143
+173 Ort   04  2.4286
+174 Ort   05  4.1429
+175 Ort   06  3.8571
+176 Ort   07  8.7143
+177 Ort   08  8.7143
+178 Ort   09 11.4286
+179 Ort   10 11.4286
+180 Ort   11 10.5714
+181 Ort   12 11.0000
+182 Ort   13 11.1429
+183 Ort   14 11.5714
+184 Ort   15 12.0000
+185 Ort   16 16.0000
+186 Ort   17 14.2857
+187 Ort   18 18.0000
+188 Ort   19 21.1429
+189 Ort   20 29.4286
+190 Ort   21 31.5714
+191 Ort   22 23.0000
+192 Ort   23 13.2857
+```
+##Gün-Tweet Shiny Uygulaması
+
+### Shiny için Veri Düzenlemesi
+```R
 x <- data.frame(matrix(,nrow = 24, ncol = 9))
-#sütun adlarını verdik
 coln <- c("saat", "Pzt", "Sal", "Car", "Per", "Cum", "Cmt", "Paz", "Ort")
 colnames(x) <- coln
-#saat sütununa saatleri ekledik
 x$saat <- c(0:23)
-#Ort sütununa time_day tablosundan Mean sütununu ekledik
-x$Ort <- time_day$Mean
-#sum_table tablosundan gerekli olan verileri çekiyoruz
-x[,(c("Paz", "Sal", "Car", "Per", "Cum", "Cmt", "Pzt"))]=t(ldply(split(sum_table$Freq, sum_table$Var1))[,-1])
-#hici ve hsonu sütunlarını da tabloya ekliyoruz.
-x$hici <- with(x[,2:6], rowSums(x[,2:6]))
-x$hsonu <- with(x[,7:8], rowSums(x[,7:8]))
+x[,(c("Paz", "Sal", "Car", "Per", "Cum", "Cmt", "Pzt", "Ort"))]=t(ldply(split(sum.table$Freq, sum.table$day))[,-1])
+x$hici <- with(x[,2:6], rowMeans(x[,2:6]))
+x$hsonu <- with(x[,7:8], rowMeans(x[,7:8]))
 ```
 ```R
 head(x)
-  saat Pzt Sal Car Per Cum Cmt Paz      Ort hici hsonu
-1    0  17   5  12   3   7   7   5 8.000000   44    12
-2    1   3   5   4   5   3   3   5 4.000000   20     8
-3    2   3   6   4   5   3   0   1 3.142857   21     1
-4    3   2   0   2   5   0   2   1 1.714286    9     3
-5    4   2   2   5   1   2   5   0 2.428571   12     5
-6    5   4   4   3   9   2   7   0 4.142857   22     7
+saat Pzt Sal Car Per Cum Cmt Paz    Ort hici hsonu
+1    0  17   5  12   3   7   7   5 8.0000  8.8   6.0
+2    1   3   5   4   5   3   3   5 4.0000  4.0   4.0
+3    2   3   6   4   5   3   0   1 3.1429  4.2   0.5
+4    3   2   0   2   5   0   2   1 1.7143  1.8   1.5
+5    4   2   2   5   1   2   5   0 2.4286  2.4   2.5
+6    5   4   4   3   9   2   7   0 4.1429  4.4   3.5
 ```
 
-## ShinyApp 
+### Shiny Uygulaması 
 Shiny kütüphanesini kullanarak dinamik grafikler elde ettik. Kullanıcıya günlere göre atılan tweetleri çizgi grafik aracılığıyla görselleştirdik. Shiny uygulaması 2 kısımdan oluşuyor. Kullanıcı arayüzü ve server kısmı. ui kısmı kullanıcının seçimleri ve grafiği gördüğü kısım, server arka planda çalışarak grafiği çizdirmek için gerekli
 
 ```R
@@ -216,7 +327,8 @@ server <- function(input, output, session) {
 
 shinyApp(ui = ui, server = server)
 ```
-Bu uygulamayı bilgisyarınızda görmek için aşağıdaki komutu RStudio'da çalıştırın. 
+Bu uygulamayı bilgisyarınızda görmek için aşağıdaki komutu RStudio'da çalıştırın. Shiny kütüphanesinin aktif olmasına 
+dikkat edin.
 
 ```R
 runGitHub("TwitterDuyguAnalizi", "erolkibris")
