@@ -327,7 +327,7 @@ server <- function(input, output, session) {
 
 shinyApp(ui = ui, server = server)
 ```
-Bu uygulamayı bilgisyarınızda görmek için aşağıdaki komutu RStudio'da çalıştırın. Shiny kütüphanesinin aktif olmasına 
+Bu uygulamayı bilgisayarınızda görmek için aşağıdaki komutu RStudio'da çalıştırın. Shiny kütüphanesinin aktif olmasına 
 dikkat edin.
 
 ```R
