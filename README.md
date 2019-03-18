@@ -119,7 +119,7 @@ ggplot(data = cities)+
 ```
 ![Şehirler](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/sehir-tweet.jpeg)
 
-##Saat-Gün-Tweet Sayısı Verisi ve Grafiği
+## Saat-Gün-Tweet Sayısı Verisi ve Grafiği
 
 Tweetlerin haftanın hangi günü, günün hangi saatinde atıldığına dair bir çizgi grafik çıkarmak istiyoruz. Fakat, elimizdeki veride, zamana dair sadece “created_at” değişkeni var. Burada, tarih ve saat birleşik olarak verilmiş.
 
