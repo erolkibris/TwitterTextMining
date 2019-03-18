@@ -78,11 +78,10 @@ x <- data.frame(matrix(,nrow = 24, ncol = 9))
 coln <- c("saat", "Pzt", "Sal", "Car", "Per", "Cum", "Cmt", "Paz", "Ort")
 colnames(x) <- coln
 x$saat <- c(0:23)
-x$Ort <- time_day$Mean
-x[,(c("Paz", "Sal", "Car", "Per", "Cum", "Cmt", "Pzt"))]=t(ldply(split(sum_table$Freq, sum_table$Var1))[,-1])
+x[,(c("Paz", "Sal", "Car", "Per", "Cum", "Cmt", "Pzt", "Ort"))]=t(ldply(split(sum.table$Freq, sum.table$day))[,-1])
 
-x$hici <- with(x[,2:6], rowSums(x[,2:6]))
-x$hsonu <- with(x[,7:8], rowSums(x[,7:8]))
+x$hici <- with(x[,2:6], rowMeans(x[,2:6]))
+x$hsonu <- with(x[,7:8], rowMeans(x[,7:8]))
 
 
 
