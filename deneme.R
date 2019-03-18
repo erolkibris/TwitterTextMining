@@ -9,14 +9,11 @@ remotes::install_github("mkearney/rtweet")
 library(rtweet)
 library(dplyr)
 library(lubridate)
-library(chron)
 library(plyr)
-library(stringr)
-library(roperators)
 library(ggplot2)
 library(tidyr)
-library(scales)
-library(reshape2)
+library(roperators)
+
 
 migo <- search_tweets(
   q="migren", n=18000 ,retryonratelimit = TRUE, include_rts = FALSE
@@ -40,6 +37,7 @@ migren_triki$day <- wday(migren_triki$date,label = TRUE)
 
 migren <- rbind(migren_tr, migren_triki[124:1040,])
 
+
 migren_time = data.frame(migren$day, migren$time)
 
 migren_time %>%
@@ -59,6 +57,8 @@ ank <- sum(migren$location %s/% 'Ankara')
 izm <- sum(migren$location %s/% 'Ýzmir')
 bur <- sum(migren$location %s/% 'Bursa')
 
+
+
 cities <- data.frame("Cities" = c("Ýstanbul","Ankara", "Ýzmir", "Bursa", "Diðer"), 
                      "Frequency" = c(ist, ank, izm, bur, 1117 - (ist+ank+izm+bur)))
 
@@ -72,13 +72,6 @@ ggplot(data = cities)+
   labs(title = "Þehirlere göre atýlan tweetler")+
   xlab("Þehirler")+
   ylab("Yüzdeler")
-
-
-sun_data = sum_table[1:24,]
-ggplot(data=sun_data, aes(x=Var2, y= Freq, group =1))+
-  geom_line()+
-  geom_line(aes(y=time_day$Mean, col ="red"))
-
 
 
 x <- data.frame(matrix(,nrow = 24, ncol = 9))
