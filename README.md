@@ -89,7 +89,7 @@ bur <- sum(migren_tr$location %s/% 'Bursa')
 ```R
 ##cities data frame oluşturup sıklıklarını ve yüzdelerini yazıyoruz.
 cities <- data.frame("Cities" = c("İstanbul","Ankara", "İzmir", "Bursa", "Diğer"), 
-                     "Frequency" = c(ist, ank, izm, bur, dim(migren)[1] - (ist+ank+izm+bur)))
+                     "Frequency" = c(ist, ank, izm, bur, dim(migren_tr)[1] - (ist+ank+izm+bur)))
 
 cities$Perc <- round(cities$Frequency / sum(cities$Frequency)*100,4)
 cities$Perc
