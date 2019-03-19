@@ -1,4 +1,4 @@
-# Twitter Duygu Analizi
+# Twitter Duygu Analizi / Twitter Sentiment Analysis
 
 [For English document](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/READMEENG.md)
 
