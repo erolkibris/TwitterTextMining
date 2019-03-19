@@ -92,7 +92,7 @@ cities <- data.frame("Cities" = c("İstanbul","Ankara", "İzmir", "Bursa", "Diğ
                      "Frequency" = c(ist, ank, izm, bur, dim(migren_tr)[1] - (ist+ank+izm+bur)))
 
 cities$Perc <- round(cities$Frequency / sum(cities$Frequency)*100,4)
-cities$Perc
+
 ```
 
 Migrenle ilgili atılan Tweetlerin konumlara göre yüzdesi aşağıdaki gibidir. “Diğer” kısmında ise Twitter hesabında yeri belirtilmemiş veya anlamlı yer belirtilmemiş kullanıcılar yer almaktadır.
