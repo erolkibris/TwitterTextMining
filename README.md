@@ -89,7 +89,7 @@ bur <- sum(migren_tr$location %s/% 'Bursa')
 ```R
 ##cities data frame oluşturup sıklıklarını ve yüzdelerini yazıyoruz.
 cities <- data.frame("Cities" = c("İstanbul","Ankara", "İzmir", "Bursa", "Diğer"), 
-                     "Frequency" = c(ist, ank, izm, bur, 1117 - (ist+ank+izm+bur)))
+                     "Frequency" = c(ist, ank, izm, bur, dim(migren_tr)[1] - (ist+ank+izm+bur)))
 
 cities$Perc <- round(cities$Frequency / sum(cities$Frequency)*100,4)
 cities$Perc
@@ -119,7 +119,7 @@ ggplot(data = cities)+
 ```
 ![Şehirler](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/sehir-tweet.jpeg)
 
-##Saat-Gün-Tweet Sayısı Verisi ve Grafiği
+## Saat-Gün-Tweet Sayısı Verisi ve Grafiği
 
 Tweetlerin haftanın hangi günü, günün hangi saatinde atıldığına dair bir çizgi grafik çıkarmak istiyoruz. Fakat, elimizdeki veride, zamana dair sadece “created_at” değişkeni var. Burada, tarih ve saat birleşik olarak verilmiş.
 
@@ -255,7 +255,7 @@ tail(sum.table,25)
 191 Ort   22 23.0000
 192 Ort   23 13.2857
 ```
-##Gün-Tweet Shiny Uygulaması
+## Gün-Tweet Shiny Uygulaması
 
 ### Shiny için Veri Düzenlemesi
 ```R
@@ -327,7 +327,7 @@ server <- function(input, output, session) {
 
 shinyApp(ui = ui, server = server)
 ```
-Bu uygulamayı bilgisyarınızda görmek için aşağıdaki komutu RStudio'da çalıştırın. Shiny kütüphanesinin aktif olmasına 
+Bu uygulamayı bilgisayarınızda görmek için aşağıdaki komutu RStudio'da çalıştırın. Shiny kütüphanesinin aktif olmasına 
 dikkat edin.
 
 ```R
