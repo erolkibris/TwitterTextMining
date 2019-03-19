@@ -15,7 +15,7 @@ library(tidyr)
 library(roperators)
 
 
-migo <- search_tweets(
+migren_tweets <- search_tweets(
   q="migren", n=18000 ,retryonratelimit = TRUE, include_rts = FALSE
 )
 
@@ -26,16 +26,20 @@ migren_triki <- migren_df %>%
   filter(migren_df$lang =="tr")%>%
   arrange(migren_triki$created_at)
   
+migren_df2 <- as.data.frame(migren_tweets)
   
-  
+migren_truc <- migren_df2%>%
+  select(status_id, created_at, text, location)%>%
+  filter(migren_df2$lang == "tr")%>%
+  arrange(migren_truc$created_at)
 
-migren_triki$created_at <- round_date(migren_triki$created_at, "hour", week_start = getOption("lubridate.week.start",7))
+migren_truc$created_at <- round_date(migren_truc$created_at, "hour", week_start = getOption("lubridate.week.start",7))
 
-migren_triki$date <- as.Date(migren_triki$created_at)
-migren_triki$time <- format(migren_triki$created_at, "%H")
-migren_triki$day <- wday(migren_triki$date,label = TRUE)
+migren_truc$date <- as.Date(migren_truc$created_at)
+migren_truc$time <- format(migren_truc$created_at, "%H")
+migren_truc$day <- wday(migren_truc$date,label = TRUE)
 
-migren <- rbind(migren_tr, migren_triki[124:1040,])
+migren <- rbind(migren, migren_truc)
 
 
 migren_time = data.frame(migren$day, migren$time)
@@ -48,19 +52,16 @@ sum_table <- as.data.frame(table(migren_time$migren.day,migren_time$migren.time)
 sum_table <- sum_table %>% 
   arrange(Var1)
 
-day_freq <- count(migren,'day')
-time_freq <- count(migren, 'time')
-date_freq <- count(migren, 'date')
 
-ist <- sum(migren$location %s/% 'İstanbul') 
+ist <- sum(migren$location %s/% 'stanbul') 
 ank <- sum(migren$location %s/% 'Ankara')
-izm <- sum(migren$location %s/% 'İzmir')
+izm <- sum(migren$location %s/% 'zmir')
 bur <- sum(migren$location %s/% 'Bursa')
 
 
 
 cities <- data.frame("Cities" = c("İstanbul","Ankara", "İzmir", "Bursa", "Diğer"), 
-                     "Frequency" = c(ist, ank, izm, bur, 1117 - (ist+ank+izm+bur)))
+                     "Frequency" = c(ist, ank, izm, bur, dim(migren)[1] - (ist+ank+izm+bur)))
 
 cities$Perc <- cities$Frequency / sum(cities$Frequency)*100
 
@@ -68,7 +69,7 @@ cities$Perc <- cities$Frequency / sum(cities$Frequency)*100
 ggplot(data = cities)+
   aes(x=Cities, y = Perc)+
   geom_bar(stat="identity",fill="light blue")+
-  theme(panel.background = element_rect(fill = "white"))+
+  theme_classic()+
   labs(title = "Şehirlere göre atılan tweetler")+
   xlab("Şehirler")+
   ylab("Yüzdeler")
