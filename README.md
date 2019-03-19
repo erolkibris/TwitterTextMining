@@ -100,12 +100,12 @@ Migrenle ilgili atılan Tweetlerin konumlara göre yüzdesi aşağıdaki gibidir
 ```R
 head(cities)
 
-   Cities  Frequency    Perc
-1 İstanbul       284 25.4252
-2   Ankara        78  6.9830
-3    İzmir        91  8.1468
-4    Bursa        33  2.9543
-5    Diğer       631 56.4906
+   Cities  Frequency   Perc
+1 İstanbul       397 13.6426
+2   Ankara       122  4.1924
+3    İzmir       137  4.7079
+4    Bursa        51  1.7526
+5    Diğer      2203 75.7045
 ```
 ```R
 #Veriyi görselleştirmek için
@@ -184,36 +184,36 @@ sum_table <- as.data.frame(table(migren_tr$day,migren_tr$time))
 colnames(sum_table) <- c("day", "time", "Freq")
 
 sum_table <- sum_table %>%
-             arrange(day)
+   arrange(day)
 ```
 ```R
 head(sum_table, 25)
    day  time Freq
-1  Paz   00    5
-2  Paz   01    5
-3  Paz   02    1
-4  Paz   03    1
-5  Paz   04    0
-6  Paz   05    0
-7  Paz   06    5
-8  Paz   07    7
-9  Paz   08    4
-10 Paz   09    6
-11 Paz   10    3
-12 Paz   11   10
-13 Paz   12    7
-14 Paz   13    5
-15 Paz   14    5
-16 Paz   15    7
-17 Paz   16    8
-18 Paz   17    8
-19 Paz   18    7
-20 Paz   19   13
-21 Paz   20   15
-22 Paz   21   22
-23 Paz   22   19
-24 Paz   23   12
-25 Pzt   00    5
+1   Paz   00    8
+2   Paz   01    7
+3   Paz   02    2
+4   Paz   03    3
+5   Paz   04    1
+6   Paz   05    2
+7   Paz   06    6
+8   Paz   07   11
+9   Paz   08    9
+10  Paz   09   11
+11  Paz   10    7
+12  Paz   11   14
+13  Paz   12   11
+14  Paz   13   10
+15  Paz   14   11
+16  Paz   15   14
+17  Paz   16   14
+18  Paz   17   17
+19  Paz   18   25
+20  Paz   19   25
+21  Paz   20   31
+22  Paz   21   37
+23  Paz   22   33
+24  Paz   23   16
+25  Pzt   00   12
 ```
 Saat bazında atılan Tweetlerin 7 gün üzerinden ortalamasını hesaplayıp, yeni bir veri seti oluşturduk.
 
@@ -225,7 +225,7 @@ sum_table2$day <- "Ort"
  
 sum.table <- rbind(sum_table,sum_table2)
 
-tail(sum.table,25)
+  tail(sum.table,25)
 ```
 ```R
     day  time  Freq
