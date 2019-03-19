@@ -52,6 +52,16 @@ sum_table <- as.data.frame(table(migren_time$migren.day,migren_time$migren.time)
 sum_table <- sum_table %>% 
   arrange(Var1)
 
+sum_table <- as.data.frame(table(migren_tr$day,migren_tr$time))
+colnames(sum_table) <- c("day", "time", "Freq")
+
+sum_table <- sum_table %>%
+  arrange(day)
+
+sum_table2 <- sum_table %>%
+  group_by(time) %>%
+  summarize(Freq=round(mean(Freq),4)) 
+sum_table2$day <- "Ort"
 
 ist <- sum(migren$location %s/% 'stanbul') 
 ank <- sum(migren$location %s/% 'Ankara')
@@ -63,7 +73,7 @@ bur <- sum(migren$location %s/% 'Bursa')
 cities <- data.frame("Cities" = c("İstanbul","Ankara", "İzmir", "Bursa", "Diğer"), 
                      "Frequency" = c(ist, ank, izm, bur, dim(migren)[1] - (ist+ank+izm+bur)))
 
-cities$Perc <- cities$Frequency / sum(cities$Frequency)*100
+cities$Perc <- round(cities$Frequency / sum(cities$Frequency)*100, 4)
 
 
 ggplot(data = cities)+
