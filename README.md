@@ -1,6 +1,6 @@
 # Twitter Duygu Analizi / Twitter Sentiment Analysis
 
-[For English document](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/READMEENG.md)
+[English document](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/READMEENG.md)
 
 ## Projenin Amacı
 
