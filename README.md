@@ -66,7 +66,8 @@ migren_df <- as.data.frame(migo)
 
 Elde ettiğimiz ham veride, farklı dillerde de migren kelimesi yer aldığını farkettik. Bu sebeple, sadece dili Türkçe olan tweetleri çekmek ve diğer gerekli bir takım sütunları (mesajın kimlik numarasını, mesajın ne zaman atıldığını, mesajın nereden atıldığını ve mesajın kendisini) çekmek için aşağıdaki kodu kullandık ve Github’da migren_tr ismiyle sakladık.
 ```R
-## Ham veri olan migren_df'den sadece status_id, created_at, text ve location ## sütunlarını ve Türkçe tweetleri alalım
+## Ham veri olan migren_df'den sadece status_id, created_at, text ve location 
+## sütunlarını ve Türkçe tweetleri alalım
 
 migren_tr <- migren_df %>%
   select(status_id, created_at, text, location)%>%
