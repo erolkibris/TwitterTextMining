@@ -511,7 +511,93 @@ bi_effect <- bigrams_seperated%>%
            str_detect(word1, "sevgili") | str_detect(word2, "sevgili"))%>%
   count(word1, word2, sort = TRUE)
 ```
+Dakika, saat, gün ve hafta bazındaki ikilileri ayırdık.
+```R
+bi_sure_dakika <- bi_sure%>%
+  filter(str_detect(word1, "dakika") | str_detect(word2, "dakika"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
 
+bi_sure_saat <- bi_sure%>%
+  filter(str_detect(word1, "saat") | str_detect(word2, "saat"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
 
+bi_sure_gun <- bi_sure%>%
+  filter(str_detect(word1, "gün") | str_detect(word2, "gün"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
 
+bi_sure_hafta <- bi_sure%>%
+  filter(str_detect(word1, "hafta") | str_detect(word2, "hafta"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
+```
 
+```R
+head(bi_sure_dakika)
+  word1 word2         n
+  <chr> <chr>     <int>
+1 15    dakikada      1
+2 15    dakikalık     1
+3 20    dakika        1
+4 3     dakikada      1
+5 45    dakika        1
+6 5     dakika        2
+```
+```R
+#dakikaları ve frekansları bir tabloda birleştirdik
+data_dakika = tibble('text' = c('3', '5','15','20','45'),
+                     'count' = c(2,4,2,1,1))  
+
+#grafik
+ggplot(data_dakika, aes(x=reorder(text, +count), y=count))+
+  ggtitle("Migren Süresi")+
+  geom_bar(stat = 'identity', fill ="light blue")+
+  coord_flip()+
+  ylab("Frekans")+
+  xlab("Dakika")
+```
+![dakika-frekans]()
+
+```R
+#saatleri ve frekansları bir tabloda birleştirdik
+data_saat = tibble('text' = c('1','2','3','5','7','24'),
+                   'count' = c(4,8,6,3,3,7))  
+
+ggplot(data_saat, aes(x=reorder(text, +count), y=count))+
+  ggtitle("Migren Süresi")+
+  geom_bar(stat = 'identity', fill ="light blue")+
+  coord_flip()+
+  ylab("Frekans")+
+  xlab("Saat")
+```
+![saat-frekans]()
+```R
+#günleri ve frekansları bir tabloda birleştirdik
+data_gun = tibble('text' = c('1','2','3','4','Her Gün','Bugün'),
+                  'count' = c(24,14,10,5,6,15))
+ggplot(data_gun, aes(x=reorder(text, +count), y=count))+
+  ggtitle("Migren Süresi")+
+  geom_bar(stat = 'identity', fill ="light blue")+
+  coord_flip()+
+  ylab("Frekans")+
+  xlab("Gün")
+```
+![gun-frekans]()
+```R
+#haftaları ve frekansları bir tabloda birleştirdik
+data_hafta = tibble('text' = c('1 Hafta', '2 Hafta'),
+                    'count' = c(10,3))
+
+ggplot(data_hafta, aes(x=reorder(text, +count), y=count))+
+  ggtitle("Migren Süresi")+
+  geom_bar(stat = 'identity', fill ="light blue")+
+  coord_flip()+
+  ylab("Frekans")+
+  xlab("Hafta")
+```
+![hafta-frekans]()
+```R
+
+```
