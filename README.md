@@ -336,3 +336,6 @@ dikkat edin.
 ```R
 runGitHub("TwitterDuyguAnalizi", "erolkibris")
 ```
+
+## Migrenin Karakteristikleri
+### Süre
