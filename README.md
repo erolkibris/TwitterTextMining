@@ -84,10 +84,10 @@ Twitter'da yaşanılan yere ait şehir isim bilgisi yani konum belirtme isteğe 
 
 ```R
 ## Hangi şehirlerden ne kadar tweet atılmış
-ist <- sum(migren_tr$location %s/% 'stanbul') 
-ank <- sum(migren_tr$location %s/% 'Ankara')
-izm <- sum(migren_tr$location %s/% 'zmir')
-bur <- sum(migren_tr$location %s/% 'Bursa')
+ist <- sum(migren$location %s/% 'stanbul') 
+ank <- sum(migren$location %s/% 'Ankara')
+izm <- sum(migren$location %s/% 'zmir')
+bur <- sum(migren$location %s/% 'Bursa')
 ```
 ```R
 ##cities data frame oluşturup sıklıklarını ve yüzdelerini yazıyoruz.
@@ -127,7 +127,7 @@ ggplot(data = cities)+
 Tweetlerin haftanın hangi günü, günün hangi saatinde atıldığına dair bir çizgi grafik çıkarmak istiyoruz. Fakat, elimizdeki veride, zamana dair sadece “created_at” değişkeni var. Burada, tarih ve saat birleşik olarak verilmiş.
 
 ```R
-migren_tr$created_at[1:10]
+migren$created_at[1:10]
 
  [1] "2019-02-18 08:27:04 UTC" "2019-02-18 11:54:36 UTC" "2019-02-18 13:09:33 UTC"
  [4] "2019-02-18 13:21:51 UTC" "2019-02-18 13:39:16 UTC" "2019-02-18 13:55:46 UTC"
@@ -138,21 +138,21 @@ migren_tr$created_at[1:10]
 R lubridate paketi bize, “created_at” değişkeninden öncelikle saatleri çekip ve yuvarlayıp, sonrasında da, tarih kısmından saati ve günü çıkarmamıza yardımcı oluyor.
 
 ```R
-migren_tr$created_at <- round_date(migren_tr$created_at, "hour", week_start = getOption("lubridate.week.start",7))
+migren$created_at <- round_date(migren$created_at, "hour", week_start = getOption("lubridate.week.start",7))
 
 ## created_at sütununda veri tarih ve saat şeklinde birleşik. 
 ## Saati yuvarlayıp created_at sütununa kaydettik.
 
-migren_tr$date <- as.Date(migren_tr$created_at)
-migren_tr$time <- format(migren_tr$created_at, "%H")
-migren_tr$day <- wday(migren_tr$date,label = TRUE)
+migren$date <- as.Date(migren$created_at)
+migren$time <- format(migren$created_at, "%H")
+migren$day <- wday(migren$date,label = TRUE)
 ```
 
 
 Artık verimizde, hem tarih, hem gün hem de saat ayrı ayrı mevcut.
 
 ```R
-head(migren_tr[,c("date","time", "day")],10)
+head(migren[,c("date","time", "day")],10)
 
        date   time day
 1  2019-02-18   08 Pzt
@@ -173,18 +173,18 @@ head(migren_tr[,c("date","time", "day")],10)
 ## created_at sütununda veri tarih ve saat şeklinde birleşik. 
 ## Saati yuvarlayıp created_at sütununa kaydettik.
 
-migren_tr$created_at <- round_date(migren_tr$created_at, "hour", week_start = getOption("lubridate.week.start",7))
+migren$created_at <- round_date(migren$created_at, "hour", week_start = getOption("lubridate.week.start",7))
 
 ## Tarih, saat ve haftanın hangi günü olduğunu dair yeni sütunları oluşturduk.
 
-migren_tr$date <- as.Date(migren_tr$created_at)
-migren_tr$time <- format(migren_tr$created_at, "%H")
-migren_tr$day <- wday(migren_tr$date,label = TRUE)
+migren$date <- as.Date(migren$created_at)
+migren$time <- format(migren$created_at, "%H")
+migren$day <- wday(migren$date,label = TRUE)
 ```
 Haftanın hangi gününde, saat kaçta, kaç tane tweet atıldığına dair biz çizgi grafiği elde etmek istiyoruz. Sonrasında, bu grafiği R Shiny uygulamasını kullanarak dinamik hale geritereceğiz. Bu sebeple, öncelikle, gerekli olan veriyi yani haftanın hangi gününde, hangi saatte kaç tane Tweet atıldığını çıkaralım.
 
 ```R
-sum_table <- as.data.frame(table(migren_tr$day,migren_tr$time))
+sum_table <- as.data.frame(table(migren$day,migren$time))
 colnames(sum_table) <- c("day", "time", "Freq")
 
 sum_table <- sum_table %>%
