@@ -13,6 +13,10 @@ library(plyr)
 library(ggplot2)
 library(tidyr)
 library(roperators)
+library(stopwords)
+library(wordcloud)
+library(tidytext)
+library(stringr)
 
 
 migren_tweets <- search_tweets(
@@ -48,19 +52,20 @@ migren_time %>%
   group_by(migren.day, migren.time)
  
 sum_table <- as.data.frame(table(migren_time$migren.day,migren_time$migren.time))
-  
+colnames(sum_table) <- c("day", "time", "Freq")  
 sum_table <- sum_table %>% 
-  arrange(Var1)
+  arrange(day)
 
-sum_table <- as.data.frame(table(migren_tr$day,migren_tr$time))
+sum_table <- as.data.frame(table(migren$day,migren$time))
 colnames(sum_table) <- c("day", "time", "Freq")
 
 sum_table <- sum_table %>%
   arrange(day)
 
 sum_table2 <- sum_table %>%
-  group_by(time) %>%
-  summarize(Freq=round(mean(Freq),4)) 
+  group_by(time)%>%
+  summarise(Freq=round(mean(Freq),4)) 
+
 sum_table2$day <- "Ort"
 
 ist <- sum(migren$location %s/% 'stanbul') 
@@ -94,14 +99,83 @@ x[,(c("Paz", "Sal", "Car", "Per", "Cum", "Cmt", "Pzt", "Ort"))]=t(ldply(split(su
 x$hici <- with(x[,2:6], rowMeans(x[,2:6]))
 x$hsonu <- with(x[,7:8], rowMeans(x[,7:8]))
 
+###########################################################
 
+data(stop_words)
+tidy_migren <- migren%>%
+  select(text)%>%
+  unnest_tokens(word, text)
 
+kelime <- tidy_migren%>%
+  count(word, sort = T)
+  
+with(wordcloud(word, n, max.words = 100))
+  
+stoptr <- stopwords::stopwords("tr",source = "stopwords-iso")  
+
+bigrams <- migren%>%
+  select(text)%>%
+  mutate(text = str_replace_all(text, " ", " ")) %>%
+  unnest_tokens(bigram, text, token = "ngrams", n = 2)
+
+bigrams_count <- bigrams %>%
+  group_by(bigram) %>%
+  count(, sort = T)
+
+sum(tidy_migren %s/% 'hava')
+
+tidy_migren[grep("hava", tidy_migren)]
+
+bigrams_seperated <- bigrams%>%
+  separate(bigram, c("word1", "word2"), sep = " ")
+
+bi_hava <- bigrams_seperated %>%
+  filter(str_detect(word1, "hava") | str_detect(word2,"hava"))%>%
+  count(word1, word2, sort = TRUE)
+
+bi_sure <- bigrams_seperated%>%
+  filter(str_detect(word1, "saat") | str_detect(word2, "saat") |
+           str_detect(word1, "dakik") | str_detect(word2, "dakik") | 
+           str_detect(word1, "dk") | str_detect(word2, "dk") |
+           str_detect(word1, "gün") | str_detect(word2, "gün")|
+           str_detect(word1, "hafta") | str_detect(word2, "hafta"))%>%
+  count(word1, word2, sort = TRUE)
+
+bi_disease <- bigrams_seperated%>%
+  filter(str_detect(word1, "stres") | str_detect(word2, "stres")|
+           str_detect(word1, "diþ") | str_detect(word2, "diþ") | 
+           str_detect(word1, "kalp") | str_detect(word2, "kalp")|
+           str_detect(word1, "depresyon") | str_detect(word2, "depresyon")|
+           str_detect(word1, "uyk") | str_detect(word2, "uyk"))%>%
+  count(word1, word2, sort = TRUE)
+
+bi_freq <- bigrams_seperated%>%
+  filter(str_detect(word1, "çok") | str_detect(word2, "çok") |
+           str_detect(word1, "kere") | str_detect(word2, "kere") | 
+           str_detect(word1, "kez") | str_detect(word2, "kez") |
+           str_detect(word1, "sefer") | str_detect(word2, "sefer"))%>%
+  count(word1, word2, sort = TRUE)
+
+bi_volume <- bigrams_seperated%>%
+  filter(str_detect(word1, "kötü") | str_detect(word2, "kötü") |
+           str_detect(word1, "ölüm") | str_detect(word2, "ölüm") | 
+           str_detect(word1, "intihar") | str_detect(word2, "intihar")|
+           str_detect(word1, "þiddet") | str_detect(word2, "þiddet")|
+           str_detect(word1, "çýldýrmak")| str_detect(word2, "çýldýrmak"))%>%
+  count(word1, word2, sort = TRUE)
+
+bi_effect <- bigrams_seperated%>%
+  filter(  str_detect(word1, "okul") | str_detect(word2, "okul") | 
+           str_detect(word1, "çalýþ") | str_detect(word2, "çalýþ") |
+           str_detect(word1, "sýnav") | str_detect(word2, "sýnav")|
+           str_detect(word1, "arkadaþ") | str_detect(word2, "arkadaþ")|
+           str_detect(word1, "dost") | str_detect(word2, "dost")|
+           str_detect(word1, "aile") | str_detect(word2, "aile")|
+           str_detect(word1, "anne") | str_detect(word2, "anne")|
+           str_detect(word1, "baba") | str_detect(word2, "baba")|
+           str_detect(word1, "çocuk") | str_detect(word2, "çocuk")|
+           str_detect(word1, "kardeþ") | str_detect(word2, "kardeþ")|
+           str_detect(word1, "sevgili") | str_detect(word2, "sevgili"))%>%
+  count(word1, word2, sort = TRUE)
 
   
-  
- 
-  
-
-
-  
-                     
