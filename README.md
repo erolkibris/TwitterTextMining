@@ -148,6 +148,7 @@ migren_tr$time <- format(migren_tr$created_at, "%H")
 migren_tr$day <- wday(migren_tr$date,label = TRUE)
 ```
 
+
 Artık verimizde, hem tarih, hem gün hem de saat ayrı ayrı mevcut.
 
 ```R
