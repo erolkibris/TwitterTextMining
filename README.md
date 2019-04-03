@@ -545,6 +545,7 @@ head(bi_sure_dakika)
 5 45    dakika        1
 6 5     dakika        2
 ```
+### Grafiklerin Çizimi
 ```R
 #dakikaları ve frekansları bir tabloda birleştirdik
 data_dakika = tibble('text' = c('3', '5','15','20','45'),
