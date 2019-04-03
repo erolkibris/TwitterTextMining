@@ -32,15 +32,26 @@ install.packages("lubridate")
 install.packages("plyr")
 install.packages("shiny")
 install.packages("reshape2")
+install.packages("tidyr")
+install.packages("wordcloud)
+install.packages("tidytext")
+install.packages("stringr")
+
+
 
 ## Paketlerin aktivasyonu
 
 library(rtweet)
 library(dplyr)
-library(roperators)
-library(ggplot2)
 library(lubridate)
 library(plyr)
+library(ggplot2)
+library(tidyr)
+library(roperators)
+library(wordcloud)
+library(tidytext)
+library(stringr)
+
 ```
 
 ## Migren Kelimesi Geçen Tweetleri Çekmek
@@ -84,10 +95,10 @@ Twitter'da yaşanılan yere ait şehir isim bilgisi yani konum belirtme isteğe 
 
 ```R
 ## Hangi şehirlerden ne kadar tweet atılmış
-ist <- sum(migren_tr$location %s/% 'stanbul') 
-ank <- sum(migren_tr$location %s/% 'Ankara')
-izm <- sum(migren_tr$location %s/% 'zmir')
-bur <- sum(migren_tr$location %s/% 'Bursa')
+ist <- sum(migren$location %s/% 'stanbul') 
+ank <- sum(migren$location %s/% 'Ankara')
+izm <- sum(migren$location %s/% 'zmir')
+bur <- sum(migren$location %s/% 'Bursa')
 ```
 ```R
 ##cities data frame oluşturup sıklıklarını ve yüzdelerini yazıyoruz.
@@ -127,7 +138,7 @@ ggplot(data = cities)+
 Tweetlerin haftanın hangi günü, günün hangi saatinde atıldığına dair bir çizgi grafik çıkarmak istiyoruz. Fakat, elimizdeki veride, zamana dair sadece “created_at” değişkeni var. Burada, tarih ve saat birleşik olarak verilmiş.
 
 ```R
-migren_tr$created_at[1:10]
+migren$created_at[1:10]
 
  [1] "2019-02-18 08:27:04 UTC" "2019-02-18 11:54:36 UTC" "2019-02-18 13:09:33 UTC"
  [4] "2019-02-18 13:21:51 UTC" "2019-02-18 13:39:16 UTC" "2019-02-18 13:55:46 UTC"
@@ -138,20 +149,21 @@ migren_tr$created_at[1:10]
 R lubridate paketi bize, “created_at” değişkeninden öncelikle saatleri çekip ve yuvarlayıp, sonrasında da, tarih kısmından saati ve günü çıkarmamıza yardımcı oluyor.
 
 ```R
-migren_tr$created_at <- round_date(migren_tr$created_at, "hour", week_start = getOption("lubridate.week.start",7))
+migren$created_at <- round_date(migren$created_at, "hour", week_start = getOption("lubridate.week.start",7))
 
 ## created_at sütununda veri tarih ve saat şeklinde birleşik. 
 ## Saati yuvarlayıp created_at sütununa kaydettik.
 
-migren_tr$date <- as.Date(migren_tr$created_at)
-migren_tr$time <- format(migren_tr$created_at, "%H")
-migren_tr$day <- wday(migren_tr$date,label = TRUE)
+migren$date <- as.Date(migren$created_at)
+migren$time <- format(migren$created_at, "%H")
+migren$day <- wday(migren$date,label = TRUE)
 ```
+
 
 Artık verimizde, hem tarih, hem gün hem de saat ayrı ayrı mevcut.
 
 ```R
-head(migren_tr[,c("date","time", "day")],10)
+head(migren[,c("date","time", "day")],10)
 
        date   time day
 1  2019-02-18   08 Pzt
@@ -172,18 +184,18 @@ head(migren_tr[,c("date","time", "day")],10)
 ## created_at sütununda veri tarih ve saat şeklinde birleşik. 
 ## Saati yuvarlayıp created_at sütununa kaydettik.
 
-migren_tr$created_at <- round_date(migren_tr$created_at, "hour", week_start = getOption("lubridate.week.start",7))
+migren$created_at <- round_date(migren$created_at, "hour", week_start = getOption("lubridate.week.start",7))
 
 ## Tarih, saat ve haftanın hangi günü olduğunu dair yeni sütunları oluşturduk.
 
-migren_tr$date <- as.Date(migren_tr$created_at)
-migren_tr$time <- format(migren_tr$created_at, "%H")
-migren_tr$day <- wday(migren_tr$date,label = TRUE)
+migren$date <- as.Date(migren$created_at)
+migren$time <- format(migren$created_at, "%H")
+migren$day <- wday(migren$date,label = TRUE)
 ```
 Haftanın hangi gününde, saat kaçta, kaç tane tweet atıldığına dair biz çizgi grafiği elde etmek istiyoruz. Sonrasında, bu grafiği R Shiny uygulamasını kullanarak dinamik hale geritereceğiz. Bu sebeple, öncelikle, gerekli olan veriyi yani haftanın hangi gününde, hangi saatte kaç tane Tweet atıldığını çıkaralım.
 
 ```R
-sum_table <- as.data.frame(table(migren_tr$day,migren_tr$time))
+sum_table <- as.data.frame(table(migren$day,migren$time))
 colnames(sum_table) <- c("day", "time", "Freq")
 
 sum_table <- sum_table %>%
@@ -338,5 +350,254 @@ runGitHub("TwitterDuyguAnalizi", "erolkibris")
 ```
 
 ## Migrenin Karakteristikleri
-### Süre
+Bu bölümde migrenin süre, etkileri, hastalıklarla ilişkisi, şiddeti ve sürekliklerini inceledik. 
+### Verinin düzenlenmesi
+migren tablosundan sadece tweetlerin olduğu sütunu alarak kelimelerine ayırıyoruz.
+```R
+#tidytext paketi gerekli
 
+tidy_migren <- migren%>%
+  select(text)%>%
+  unnest_tokens(word, text)
+```
+```R
+head(tidy_migren,10)
+           
+           word
+1         benim
+1.1      migren
+1.2 ataklarımın
+1.3         ana
+1.4  kaynağıdır
+1.5       https
+1.6        t.co
+1.7  xrsitmiuu0
+2        migren
+2.1         ben
+```
+kelimelerin frekanslarını hesapladık.
+```R
+kelime <- tidy_migren%>%
+  count(word, sort = T)
+```
+
+```R
+head(kelime,10)
+   word       n
+   <chr>  <int>
+ 1 migren  2958
+ 2 bir      563
+ 3 ve       401
+ 4 bu       395
+ 5 https    351
+ 6 t.co     350
+ 7 ağrısı   346
+ 8 beni     257
+ 9 de       241
+10 bi       239
+```
+Kelimeleri ikili olarak ayırdık.
+```R
+bigrams <- migren%>%
+  select(text)%>%
+  mutate(text = str_replace_all(text, " ", " ")) %>%
+  unnest_tokens(bigram, text, token = "ngrams", n = 2)
+```
+```R
+head(bigrams,10)
+                bigram
+1         benim migren
+1.1 migren ataklarımın
+1.2    ataklarımın ana
+1.3     ana kaynağıdır
+1.4   kaynağıdır https
+1.5         https t.co
+1.6    t.co xrsitmiuu0
+1.7  xrsitmiuu0 migren
+1.8         migren ben
+1.9           ben daha
+```
+İkili kelimelerin frekanslarını hesapladık.
+```R
+bigrams_count <- bigrams %>%
+  group_by(bigram) %>%
+  count(, sort = T)
+```
+```R
+head(bigrams_count,10)
+
+   bigram            n
+   <chr>         <int>
+ 1 https t.co      350
+ 2 migren ağrısı   206
+ 3 bu migren       120
+ 4 baş ağrısı       78
+ 5 migren beni      75
+ 6 migren ve        70
+ 7 bir migren       64
+ 8 migren sen       57
+ 9 ve migren        56
+10 migren var       51
+```
+İkili kelimeleri ikiye bölerek tabloya kaydettik.
+```R
+bigrams_seperated <- bigrams%>%
+  separate(bigram, c("word1", "word2"), sep = " ")
+```
+```
+head(bigrams_seperated,10)
+
+          word1       word2
+1         benim      migren
+1.1      migren ataklarımın
+1.2 ataklarımın         ana
+1.3         ana  kaynağıdır
+1.4  kaynağıdır       https
+1.5       https        t.co
+1.6        t.co  xrsitmiuu0
+1.7  xrsitmiuu0      migren
+1.8      migren         ben
+1.9         ben        daha
+```
+Analizini yapmak istediğimiz ikilileri 5 farklı tabloda topladık.
+```R
+#süreyle ilgili tablo
+bi_sure <- bigrams_seperated%>%
+  filter(str_detect(word1, "saat") | str_detect(word2, "saat") |
+           str_detect(word1, "dakik") | str_detect(word2, "dakik") | 
+           str_detect(word1, "dk") | str_detect(word2, "dk") |
+           str_detect(word1, "gün") | str_detect(word2, "gün")|
+           str_detect(word1, "hafta") | str_detect(word2, "hafta"))%>%
+  count(word1, word2, sort = TRUE)
+  
+#hastalıkla ilgili tablo
+bi_disease <- bigrams_seperated%>%
+  filter(str_detect(word1, "stres") | str_detect(word2, "stres")|
+           str_detect(word1, "diş") | str_detect(word2, "diş") | 
+           str_detect(word1, "kalp") | str_detect(word2, "kalp")|
+           str_detect(word1, "depresyon") | str_detect(word2, "depresyon")|
+           str_detect(word1, "uyk") | str_detect(word2, "uyk"))%>%
+  count(word1, word2, sort = TRUE)
+
+#sıklıkla alakalı tablo
+bi_freq <- bigrams_seperated%>%
+  filter(str_detect(word1, "çok") | str_detect(word2, "çok") |
+           str_detect(word1, "kere") | str_detect(word2, "kere") | 
+           str_detect(word1, "kez") | str_detect(word2, "kez") |
+           str_detect(word1, "sefer") | str_detect(word2, "sefer"))%>%
+  count(word1, word2, sort = TRUE)
+
+#şiddetle ilgili tablo
+bi_volume <- bigrams_seperated%>%
+  filter(str_detect(word1, "kötü") | str_detect(word2, "kötü") |
+           str_detect(word1, "ölüm") | str_detect(word2, "ölüm") | 
+           str_detect(word1, "intihar") | str_detect(word2, "intihar")|
+           str_detect(word1, "şiddet") | str_detect(word2, "şiddet")|
+           str_detect(word1, "çıldırmak")| str_detect(word2, "çıldırmak"))%>%
+  count(word1, word2, sort = TRUE)
+
+#etkisiyle ilgili tablo
+bi_effect <- bigrams_seperated%>%
+  filter(  str_detect(word1, "okul") | str_detect(word2, "okul") | 
+           str_detect(word1, "çalış") | str_detect(word2, "çalış") |
+           str_detect(word1, "sınav") | str_detect(word2, "sınav")|
+           str_detect(word1, "arkadaş") | str_detect(word2, "arkadaş")|
+           str_detect(word1, "dost") | str_detect(word2, "dost")|
+           str_detect(word1, "aile") | str_detect(word2, "aile")|
+           str_detect(word1, "anne") | str_detect(word2, "anne")|
+           str_detect(word1, "baba") | str_detect(word2, "baba")|
+           str_detect(word1, "çocuk") | str_detect(word2, "çocuk")|
+           str_detect(word1, "kardeş") | str_detect(word2, "kardeş")|
+           str_detect(word1, "sevgili") | str_detect(word2, "sevgili"))%>%
+  count(word1, word2, sort = TRUE)
+```
+Dakika, saat, gün ve hafta bazındaki ikilileri ayırdık.
+```R
+bi_sure_dakika <- bi_sure%>%
+  filter(str_detect(word1, "dakika") | str_detect(word2, "dakika"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
+
+bi_sure_saat <- bi_sure%>%
+  filter(str_detect(word1, "saat") | str_detect(word2, "saat"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
+
+bi_sure_gun <- bi_sure%>%
+  filter(str_detect(word1, "gün") | str_detect(word2, "gün"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
+
+bi_sure_hafta <- bi_sure%>%
+  filter(str_detect(word1, "hafta") | str_detect(word2, "hafta"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
+```
+
+```R
+head(bi_sure_dakika)
+  word1 word2         n
+  <chr> <chr>     <int>
+1 15    dakikada      1
+2 15    dakikalık     1
+3 20    dakika        1
+4 3     dakikada      1
+5 45    dakika        1
+6 5     dakika        2
+```
+```R
+#dakikaları ve frekansları bir tabloda birleştirdik
+data_dakika = tibble('text' = c('3', '5','15','20','45'),
+                     'count' = c(2,4,2,1,1))  
+
+#grafik
+ggplot(data_dakika, aes(x=reorder(text, +count), y=count))+
+  ggtitle("Migren Süresi")+
+  geom_bar(stat = 'identity', fill ="light blue")+
+  coord_flip()+
+  ylab("Frekans")+
+  xlab("Dakika")
+```
+![dakika-frekans]()
+
+```R
+#saatleri ve frekansları bir tabloda birleştirdik
+data_saat = tibble('text' = c('1','2','3','5','7','24'),
+                   'count' = c(4,8,6,3,3,7))  
+
+ggplot(data_saat, aes(x=reorder(text, +count), y=count))+
+  ggtitle("Migren Süresi")+
+  geom_bar(stat = 'identity', fill ="light blue")+
+  coord_flip()+
+  ylab("Frekans")+
+  xlab("Saat")
+```
+![saat-frekans]()
+```R
+#günleri ve frekansları bir tabloda birleştirdik
+data_gun = tibble('text' = c('1','2','3','4','Her Gün','Bugün'),
+                  'count' = c(24,14,10,5,6,15))
+ggplot(data_gun, aes(x=reorder(text, +count), y=count))+
+  ggtitle("Migren Süresi")+
+  geom_bar(stat = 'identity', fill ="light blue")+
+  coord_flip()+
+  ylab("Frekans")+
+  xlab("Gün")
+```
+![gun-frekans]()
+```R
+#haftaları ve frekansları bir tabloda birleştirdik
+data_hafta = tibble('text' = c('1 Hafta', '2 Hafta'),
+                    'count' = c(10,3))
+
+ggplot(data_hafta, aes(x=reorder(text, +count), y=count))+
+  ggtitle("Migren Süresi")+
+  geom_bar(stat = 'identity', fill ="light blue")+
+  coord_flip()+
+  ylab("Frekans")+
+  xlab("Hafta")
+```
+![hafta-frekans]()
+```R
+
+```
