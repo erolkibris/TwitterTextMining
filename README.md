@@ -558,7 +558,7 @@ ggplot(data_dakika, aes(x=reorder(text, +count), y=count))+
   ylab("Frekans")+
   xlab("Dakika")
 ```
-![dakika-frekans]()
+![dakika-frekans](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/dakika-frekans.jpeg)
 
 ```R
 #saatleri ve frekansları bir tabloda birleştirdik
@@ -572,7 +572,7 @@ ggplot(data_saat, aes(x=reorder(text, +count), y=count))+
   ylab("Frekans")+
   xlab("Saat")
 ```
-![saat-frekans]()
+![saat-frekans](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/saat-frekans.jpeg)
 ```R
 #günleri ve frekansları bir tabloda birleştirdik
 data_gun = tibble('text' = c('1','2','3','4','Her Gün','Bugün'),
@@ -584,7 +584,7 @@ ggplot(data_gun, aes(x=reorder(text, +count), y=count))+
   ylab("Frekans")+
   xlab("Gün")
 ```
-![gun-frekans]()
+![gun-frekans](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/gun-frekans.jpeg)
 ```R
 #haftaları ve frekansları bir tabloda birleştirdik
 data_hafta = tibble('text' = c('1 Hafta', '2 Hafta'),
@@ -597,7 +597,5 @@ ggplot(data_hafta, aes(x=reorder(text, +count), y=count))+
   ylab("Frekans")+
   xlab("Hafta")
 ```
-![hafta-frekans]()
-```R
+![hafta-frekans](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/hafta-frekans.jpeg)
 
-```
