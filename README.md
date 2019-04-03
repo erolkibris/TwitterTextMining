@@ -32,15 +32,26 @@ install.packages("lubridate")
 install.packages("plyr")
 install.packages("shiny")
 install.packages("reshape2")
+install.packages("tidyr")
+install.packages("wordcloud)
+install.packages("tidytext")
+install.packages("stringr")
+
+
 
 ## Paketlerin aktivasyonu
 
 library(rtweet)
 library(dplyr)
-library(roperators)
-library(ggplot2)
 library(lubridate)
 library(plyr)
+library(ggplot2)
+library(tidyr)
+library(roperators)
+library(wordcloud)
+library(tidytext)
+library(stringr)
+
 ```
 
 ## Migren Kelimesi Geçen Tweetleri Çekmek
@@ -339,5 +350,168 @@ runGitHub("TwitterDuyguAnalizi", "erolkibris")
 ```
 
 ## Migrenin Karakteristikleri
-### Süre
+Bu bölümde migrenin süre, etkileri, hastalıklarla ilişkisi, şiddeti ve sürekliklerini inceledik. 
+### Verinin düzenlenmesi
+migren tablosundan sadece tweetlerin olduğu sütunu alarak kelimelerine ayırıyoruz.
+```R
+#tidytext paketi gerekli
+
+tidy_migren <- migren%>%
+  select(text)%>%
+  unnest_tokens(word, text)
+```
+```R
+head(tidy_migren,10)
+           
+           word
+1         benim
+1.1      migren
+1.2 ataklarımın
+1.3         ana
+1.4  kaynağıdır
+1.5       https
+1.6        t.co
+1.7  xrsitmiuu0
+2        migren
+2.1         ben
+```
+kelimelerin frekanslarını hesapladık.
+```R
+kelime <- tidy_migren%>%
+  count(word, sort = T)
+```
+
+```R
+head(kelime,10)
+   word       n
+   <chr>  <int>
+ 1 migren  2958
+ 2 bir      563
+ 3 ve       401
+ 4 bu       395
+ 5 https    351
+ 6 t.co     350
+ 7 ağrısı   346
+ 8 beni     257
+ 9 de       241
+10 bi       239
+```
+Kelimeleri ikili olarak ayırdık.
+```R
+bigrams <- migren%>%
+  select(text)%>%
+  mutate(text = str_replace_all(text, " ", " ")) %>%
+  unnest_tokens(bigram, text, token = "ngrams", n = 2)
+```
+```R
+head(bigrams,10)
+                bigram
+1         benim migren
+1.1 migren ataklarımın
+1.2    ataklarımın ana
+1.3     ana kaynağıdır
+1.4   kaynağıdır https
+1.5         https t.co
+1.6    t.co xrsitmiuu0
+1.7  xrsitmiuu0 migren
+1.8         migren ben
+1.9           ben daha
+```
+İkili kelimelerin frekanslarını hesapladık.
+```R
+bigrams_count <- bigrams %>%
+  group_by(bigram) %>%
+  count(, sort = T)
+```
+```R
+head(bigrams_count,10)
+
+   bigram            n
+   <chr>         <int>
+ 1 https t.co      350
+ 2 migren ağrısı   206
+ 3 bu migren       120
+ 4 baş ağrısı       78
+ 5 migren beni      75
+ 6 migren ve        70
+ 7 bir migren       64
+ 8 migren sen       57
+ 9 ve migren        56
+10 migren var       51
+```
+İkili kelimeleri ikiye bölerek tabloya kaydettik.
+```R
+bigrams_seperated <- bigrams%>%
+  separate(bigram, c("word1", "word2"), sep = " ")
+```
+```
+head(bigrams_seperated,10)
+
+          word1       word2
+1         benim      migren
+1.1      migren ataklarımın
+1.2 ataklarımın         ana
+1.3         ana  kaynağıdır
+1.4  kaynağıdır       https
+1.5       https        t.co
+1.6        t.co  xrsitmiuu0
+1.7  xrsitmiuu0      migren
+1.8      migren         ben
+1.9         ben        daha
+```
+Analizini yapmak istediğimiz ikilileri 5 farklı tabloda topladık.
+```R
+#süreyle ilgili tablo
+bi_sure <- bigrams_seperated%>%
+  filter(str_detect(word1, "saat") | str_detect(word2, "saat") |
+           str_detect(word1, "dakik") | str_detect(word2, "dakik") | 
+           str_detect(word1, "dk") | str_detect(word2, "dk") |
+           str_detect(word1, "gün") | str_detect(word2, "gün")|
+           str_detect(word1, "hafta") | str_detect(word2, "hafta"))%>%
+  count(word1, word2, sort = TRUE)
+  
+#hastalıkla ilgili tablo
+bi_disease <- bigrams_seperated%>%
+  filter(str_detect(word1, "stres") | str_detect(word2, "stres")|
+           str_detect(word1, "diş") | str_detect(word2, "diş") | 
+           str_detect(word1, "kalp") | str_detect(word2, "kalp")|
+           str_detect(word1, "depresyon") | str_detect(word2, "depresyon")|
+           str_detect(word1, "uyk") | str_detect(word2, "uyk"))%>%
+  count(word1, word2, sort = TRUE)
+
+#sıklıkla alakalı tablo
+bi_freq <- bigrams_seperated%>%
+  filter(str_detect(word1, "çok") | str_detect(word2, "çok") |
+           str_detect(word1, "kere") | str_detect(word2, "kere") | 
+           str_detect(word1, "kez") | str_detect(word2, "kez") |
+           str_detect(word1, "sefer") | str_detect(word2, "sefer"))%>%
+  count(word1, word2, sort = TRUE)
+
+#şiddetle ilgili tablo
+bi_volume <- bigrams_seperated%>%
+  filter(str_detect(word1, "kötü") | str_detect(word2, "kötü") |
+           str_detect(word1, "ölüm") | str_detect(word2, "ölüm") | 
+           str_detect(word1, "intihar") | str_detect(word2, "intihar")|
+           str_detect(word1, "şiddet") | str_detect(word2, "şiddet")|
+           str_detect(word1, "çıldırmak")| str_detect(word2, "çıldırmak"))%>%
+  count(word1, word2, sort = TRUE)
+
+#etkisiyle ilgili tablo
+bi_effect <- bigrams_seperated%>%
+  filter(  str_detect(word1, "okul") | str_detect(word2, "okul") | 
+           str_detect(word1, "çalış") | str_detect(word2, "çalış") |
+           str_detect(word1, "sınav") | str_detect(word2, "sınav")|
+           str_detect(word1, "arkadaş") | str_detect(word2, "arkadaş")|
+           str_detect(word1, "dost") | str_detect(word2, "dost")|
+           str_detect(word1, "aile") | str_detect(word2, "aile")|
+           str_detect(word1, "anne") | str_detect(word2, "anne")|
+           str_detect(word1, "baba") | str_detect(word2, "baba")|
+           str_detect(word1, "çocuk") | str_detect(word2, "çocuk")|
+           str_detect(word1, "kardeş") | str_detect(word2, "kardeş")|
+           str_detect(word1, "sevgili") | str_detect(word2, "sevgili"))%>%
+  count(word1, word2, sort = TRUE)
+```
+
+
+
 
