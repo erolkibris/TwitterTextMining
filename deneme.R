@@ -101,7 +101,7 @@ x$hsonu <- with(x[,7:8], rowMeans(x[,7:8]))
 
 ###########################################################
 
-data(stop_words)
+
 tidy_migren <- migren%>%
   select(text)%>%
   unnest_tokens(word, text)
@@ -178,4 +178,71 @@ bi_effect <- bigrams_seperated%>%
            str_detect(word1, "sevgili") | str_detect(word2, "sevgili"))%>%
   count(word1, word2, sort = TRUE)
 
-  
+bi_sure_dakika <- bi_sure%>%
+  filter(str_detect(word1, "dakika") | str_detect(word2, "dakika"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
+
+bi_sure_saat <- bi_sure%>%
+  filter(str_detect(word1, "saat") | str_detect(word2, "saat"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
+
+bi_sure_gun <- bi_sure%>%
+  filter(str_detect(word1, "gün") | str_detect(word2, "gün"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
+
+bi_sure_hafta <- bi_sure%>%
+  filter(str_detect(word1, "hafta") | str_detect(word2, "hafta"))%>%
+  arrange(word1)%>%
+  top_n(10,n)  
+
+data_dakika = tibble('text' = c('3', '5','15','20','45'),
+                     'count' = c(2,4,2,1,1))  
+
+ggplot(data_dakika, aes(x=reorder(text, +count), y=count))+
+  ggtitle("Migren Süresi")+
+  geom_bar(stat = 'identity', fill ="light blue")+
+  coord_flip()+
+  ylab("Frekans")+
+  xlab("Dakika")
+
+data_saat = tibble('text' = c('1','2','3','5','7','24'),
+                   'count' = c(4,8,6,3,3,7))  
+
+ggplot(data_saat, aes(x=reorder(text, +count), y=count))+
+  ggtitle("Migren Süresi")+
+  geom_bar(stat = 'identity', fill ="light blue")+
+  coord_flip()+
+  ylab("Frekans")+
+  xlab("Saat")
+
+data_gun = tibble('text' = c('1','2','3','4','Her Gün','Bugün'),
+                  'count' = c(24,14,10,5,6,15))
+ggplot(data_gun, aes(x=reorder(text, +count), y=count))+
+  ggtitle("Migren Süresi")+
+  geom_bar(stat = 'identity', fill ="light blue")+
+  coord_flip()+
+  ylab("Frekans")+
+  xlab("Gün")
+
+
+data_hafta = tibble('text' = c('1 Hafta', '2 Hafta'),
+                    'count' = c(10,3))
+
+ggplot(data_hafta, aes(x=reorder(text, +count), y=count))+
+  ggtitle("Migren Süresi")+
+  geom_bar(stat = 'identity', fill ="light blue")+
+  coord_flip()+
+  ylab("Frekans")+
+  xlab("Hafta")
+
+data_sure = tibble('zaman' = c(rep('Dakika',5), rep('Saat',6), rep('Gün',6),rep('Hafta',2)),
+                   'text'= c('3','5','15','20','45','1','2','3','5','7','24','1','2','3','4','Her gün','Bugün',
+                             'Bir hafta','Ýki hafta'), 
+                   'count'=c(2,4,2,1,1,4,8,6,3,3,7,24,14,10,5,6,15,10,3))
+
+
+
+
