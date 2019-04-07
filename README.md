@@ -2,6 +2,7 @@
 
 [English document](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/READMEENG.md)
 
+
 ## Projenin Amacı
 
 Gelişen teknolojiyle birlikte ortaya çıkan sosyal medya araçları farklı disiplerden araştırmacılara, çalışmaları için anlık ve büyük boyutta veri imkanı sunmaktadır. Biz bu çalışmamız da, Türkiye’de yaklaşık olarak 7 milyon kişiyi hem fiziksel hem de ruhsal olarak etkileyen migren rahatsızlığının Twitter’da Türkçe mesajlardan elde edilen veriler doğrultusunda duygu analizini yapmayı planlamaktayız. Çalışmamızda özellikle, Twitter mesajlarında, migren rahatsızlığının üç temel karekteristiği olan, frekansını, süresini ve şiddetini belirtmek için Türkçe Twitter kullanıcıların hangi kelimeleri kullandığı, bu mesajları haftanın hangi gününde ve günün hangi saatinde daha çok kullandığı üzerine çıkarımlar yapmayı ummaktayız. Bu çıkarımları yapabilmek için de istatistiksel veri görselleştirme araçlarını kullanmayı planlanmaktayız. Son olarak, migren hastalarının yaşam kalitesinin artmasına katkıda bulunmak için elde ettiğimiz bulguları için baş ağrısı uzmanları ile paylaşmayı planlamaktayız.
@@ -545,6 +546,7 @@ head(bi_sure_dakika)
 5 45    dakika        1
 6 5     dakika        2
 ```
+### Grafiklerin Çizimi
 ```R
 #dakikaları ve frekansları bir tabloda birleştirdik
 data_dakika = tibble('text' = c('3', '5','15','20','45'),
@@ -558,7 +560,7 @@ ggplot(data_dakika, aes(x=reorder(text, +count), y=count))+
   ylab("Frekans")+
   xlab("Dakika")
 ```
-![dakika-frekans]()
+![dakika-frekans](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/dakika-frekans.jpeg)
 
 ```R
 #saatleri ve frekansları bir tabloda birleştirdik
@@ -572,7 +574,7 @@ ggplot(data_saat, aes(x=reorder(text, +count), y=count))+
   ylab("Frekans")+
   xlab("Saat")
 ```
-![saat-frekans]()
+![saat-frekans](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/saat-frekans.jpeg)
 ```R
 #günleri ve frekansları bir tabloda birleştirdik
 data_gun = tibble('text' = c('1','2','3','4','Her Gün','Bugün'),
@@ -584,7 +586,7 @@ ggplot(data_gun, aes(x=reorder(text, +count), y=count))+
   ylab("Frekans")+
   xlab("Gün")
 ```
-![gun-frekans]()
+![gun-frekans](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/gun-frekans.jpeg)
 ```R
 #haftaları ve frekansları bir tabloda birleştirdik
 data_hafta = tibble('text' = c('1 Hafta', '2 Hafta'),
@@ -597,7 +599,5 @@ ggplot(data_hafta, aes(x=reorder(text, +count), y=count))+
   ylab("Frekans")+
   xlab("Hafta")
 ```
-![hafta-frekans]()
-```R
+![hafta-frekans](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/hafta-frekans.jpeg)
 
-```
