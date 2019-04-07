@@ -21,10 +21,10 @@ R programı, Twitter developer hesabına gerek kalmadan, Twitter’dan veri çek
 ## R plyr veri düzenlemesi için
 ## R shiny paketi uygulama için gerekli
 ## R reshape2 veriyi görselleştirmek için düzenlemede gerekli
-## tidyr paketi kelime analizinde düzenleme için gerekli
-## wordcloud paketi kelime bulutu yapmak için gerekli
-## tidytext paketi metin madenciliği için gerekli
-## stringr paketi istenilen kelimeleri bulmak için gerekli
+## R tidyr paketi kelime analizinde düzenleme için gerekli
+## R wordcloud paketi kelime bulutu yapmak için gerekli
+## R tidytext paketi metin madenciliği için gerekli
+## R stringr paketi istenilen kelimeleri bulmak için gerekli
 
 ## Paketlerin kurulumu
 
