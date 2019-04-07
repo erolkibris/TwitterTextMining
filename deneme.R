@@ -122,10 +122,6 @@ bigrams_count <- bigrams %>%
   group_by(bigram) %>%
   count(, sort = T)
 
-sum(tidy_migren %s/% 'hava')
-
-tidy_migren[grep("hava", tidy_migren)]
-
 bigrams_seperated <- bigrams%>%
   separate(bigram, c("word1", "word2"), sep = " ")
 
@@ -244,5 +240,146 @@ data_sure = tibble('zaman' = c(rep('Dakika',5), rep('Saat',6), rep('Gün',6),rep(
                    'count'=c(2,4,2,1,1,4,8,6,3,3,7,24,14,10,5,6,15,10,3))
 
 
+bi_disease_dis <- bi_disease%>%
+  filter(str_detect(word1, "diþ") | str_detect(word2, "diþ"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
 
+bi_disease_stres <- bi_disease%>%
+  filter(str_detect(word1, "stres") | str_detect(word2, "stres"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
 
+bi_disease_kalp <- bi_disease%>%
+  filter(str_detect(word1, "kalp") | str_detect(word2, "kalp"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
+
+bi_disease_uyku <- bi_disease%>%
+  filter(str_detect(word1, "uyk") | str_detect(word2, "uyk"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
+
+bi_disease_depr <- bi_disease%>%
+  filter(str_detect(word1, "depresyon") | str_detect(word2, "depresyon"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
+
+bi_freq_cok <- bi_freq%>%
+  filter(str_detect(word1, "çok") | str_detect(word2, "çok"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
+
+bi_freq_kere <- bi_freq%>%
+  filter(str_detect(word1, "kere") | str_detect(word2, "kere"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
+
+bi_freq_kez <- bi_freq%>%
+  filter(str_detect(word1, "kez") | str_detect(word2, "kez"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
+
+bi_freq_sefer <- bi_freq%>%
+  filter(str_detect(word1, "sefer") | str_detect(word2, "sefer"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
+
+bi_volume_kotu <- bi_volume%>%
+  filter(str_detect(word1, "kötü") | str_detect(word2, "kötü"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
+
+bi_volume_olum <- bi_volume%>%
+  filter(str_detect(word1, "ölüm") | str_detect(word2, "ölüm"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
+
+bi_volume_intihar <- bi_volume%>%
+  filter(str_detect(word1, "intihar") | str_detect(word2, "intihar"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
+
+bi_volume_siddet <- bi_volume%>%
+  filter(str_detect(word1, "þiddet") | str_detect(word2, "þiddet"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
+
+bi_effect_sinav <- bi_effect%>%
+  filter(str_detect(word1, "sýnav") | str_detect(word2, "sýnav"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
+
+bi_volume_calis <- bi_effect%>%
+  filter(str_detect(word1, "çalýþ") | str_detect(word2, "çalýþ"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
+
+bi_volume_dost <- bi_effect%>%
+  filter(str_detect(word1, "dost") | str_detect(word2, "dost"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
+
+bi_volume_baba <- bi_effect%>%
+  filter(str_detect(word1, "baba") | str_detect(word2, "baba"))%>%
+  arrange(word1)%>%
+  top_n(10,n)
+
+data_dis = tibble('text' = c('aðrý', 'sýkma'),
+                  'count' = c(15,9))
+ggplot(data_dis, aes(x=reorder(text, +count), y=count))+
+  ggtitle("Migren-Hastalýk Ýliþkisi")+
+  geom_bar(stat = 'identity', fill ="light blue")+
+  coord_flip()+
+  ylab("Frekans")+
+  xlab("Diþ")
+
+data_uyku = tibble('text' = c('aðrý', 'düzen'), 
+                   'count' = c(3,4))
+
+ggplot(data_uyku, aes(x=reorder(text, +count), y=count))+
+  ggtitle("Migren-Hastalýk Ýliþkisi")+
+  geom_bar(stat = 'identity', fill ="light blue")+
+  coord_flip()+
+  ylab("Frekans")+
+  xlab("Uyku")
+
+data_kalp = tibble('text' = c('aðrý', 'hasta'), 
+                   'count' = c(4,3))
+
+ggplot(data_kalp, aes(x=reorder(text, +count), y=count))+
+  ggtitle("Migren-Hastalýk Ýliþkisi")+
+  geom_bar(stat = 'identity', fill ="light blue")+
+  coord_flip()+
+  ylab("Frekans")+
+  xlab("Kalp")
+
+data_cok = tibble('text' = c('zor', 'kötü','güzel','az','daha'), 
+                   'count' = c(13,10,8,5,14))
+
+ggplot(data_cok, aes(x=reorder(text, +count), y=count))+
+  ggtitle("Migren-Hastalýk Ýliþkisi")+
+  geom_bar(stat = 'identity', fill ="light blue")+
+  coord_flip()+
+  ylab("Frekans")+
+  xlab("Çok")
+
+data_kez = tibble('text' = c('ilk', 'iki'), 
+                   'count' = c(4,2))
+
+ggplot(data_kez, aes(x=reorder(text, +count), y=count))+
+  ggtitle("Migren-Hastalýk Ýliþkisi")+
+  geom_bar(stat = 'identity', fill ="light blue")+
+  coord_flip()+
+  ylab("Frekans")+
+  xlab("Kez")
+
+data_kotu = tibble('text' = c('cok', 'biri','bir','daha'), 
+                   'count' = c(12,9,8,4))
+
+ggplot(data_kotu, aes(x=reorder(text, +count), y=count))+
+  ggtitle("Migren-Hastalýk Ýliþkisi")+
+  geom_bar(stat = 'identity', fill ="light blue")+
+  coord_flip()+
+  ylab("Frekans")+
+  xlab("Kötü")
