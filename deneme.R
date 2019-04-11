@@ -383,3 +383,7 @@ ggplot(data_kotu, aes(x=reorder(text, +count), y=count))+
   coord_flip()+
   ylab("Frekans")+
   xlab("Kötü")
+
+data_hastalik = tibble('hastalik' = c(rep('Diþ',2), rep('Kalp',2), rep('Uyku',2)),
+                   'text'= c('Aðrý', 'Sýkma','Aðrý', 'Hasta','Aðrý','Düzen'), 
+                   'count'=c(15,9,4,3,3,4))
