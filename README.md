@@ -21,7 +21,10 @@ R programı, Twitter developer hesabına gerek kalmadan, Twitter’dan veri çek
 ## R plyr veri düzenlemesi için
 ## R shiny paketi uygulama için gerekli
 ## R reshape2 veriyi görselleştirmek için düzenlemede gerekli
-
+## R tidyr paketi kelime analizinde düzenleme için gerekli
+## R wordcloud paketi kelime bulutu yapmak için gerekli
+## R tidytext paketi metin madenciliği için gerekli
+## R stringr paketi istenilen kelimeleri bulmak için gerekli
 
 ## Paketlerin kurulumu
 
@@ -601,3 +604,80 @@ ggplot(data_hafta, aes(x=reorder(text, +count), y=count))+
 ```
 ![hafta-frekans](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/hafta-frekans.jpeg)
 
+```R
+data_dis = tibble('text' = c('ağrı', 'sıkma'),
+                  'count' = c(15,9))
+ggplot(data_dis, aes(x=reorder(text, +count), y=count))+
+  ggtitle("Migren-Hastalık İlişkisi")+
+  geom_bar(stat = 'identity', fill ="light blue")+
+  coord_flip()+
+  ylab("Frekans")+
+  xlab("Diş")
+```
+![dis-frekans](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/dis-freq.jpeg)
+
+```R
+data_uyku = tibble('text' = c('ağrı', 'düzen'), 
+                   'count' = c(3,4))
+
+ggplot(data_uyku, aes(x=reorder(text, +count), y=count))+
+  ggtitle("Migren-Hastalık İlişkisi")+
+  geom_bar(stat = 'identity', fill ="light blue")+
+  coord_flip()+
+  ylab("Frekans")+
+  xlab("Uyku")
+```
+![uyku-frekans](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/uyku-freq.jpeg)
+
+
+```R
+data_kalp = tibble('text' = c('ağrı', 'hasta'), 
+                   'count' = c(4,3))
+
+ggplot(data_kalp, aes(x=reorder(text, +count), y=count))+
+  ggtitle("Migren-Hastalık İlişkisi")+
+  geom_bar(stat = 'identity', fill ="light blue")+
+  coord_flip()+
+  ylab("Frekans")+
+  xlab("Kalp")
+```
+![kalp-frekans](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/kalp-freq.jpeg)
+
+```R
+data_cok = tibble('text' = c('zor', 'kötü','güzel','az','daha'), 
+                   'count' = c(13,10,8,5,14))
+
+ggplot(data_cok, aes(x=reorder(text, +count), y=count))+
+  ggtitle("Migren-Hastalık İlişkisi")+
+  geom_bar(stat = 'identity', fill ="light blue")+
+  coord_flip()+
+  ylab("Frekans")+
+  xlab("Çok")
+```
+![cok-frekans](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/cok-freq.jpeg)
+
+```R
+data_kez = tibble('text' = c('ilk', 'iki'), 
+                   'count' = c(4,2))
+
+ggplot(data_kez, aes(x=reorder(text, +count), y=count))+
+  ggtitle("Migren-Hastalık İlişkisi")+
+  geom_bar(stat = 'identity', fill ="light blue")+
+  coord_flip()+
+  ylab("Frekans")+
+  xlab("Kez")
+```
+![kez-frekans](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/kez-freq.jpeg)
+
+```R
+data_kotu = tibble('text' = c('cok', 'biri','bir','daha'), 
+                   'count' = c(12,9,8,4))
+
+ggplot(data_kotu, aes(x=reorder(text, +count), y=count))+
+  ggtitle("Migren-Hastalık İlişkisi")+
+  geom_bar(stat = 'identity', fill ="light blue")+
+  coord_flip()+
+  ylab("Frekans")+
+  xlab("Kötü")
+```
+![kotu-frekans](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/kotu-freq.jpeg)
