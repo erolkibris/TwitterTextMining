@@ -358,7 +358,7 @@ data_cok = tibble('text' = c('zor', 'kötü','güzel','az','daha'),
                    'count' = c(13,10,8,5,14))
 
 ggplot(data_cok, aes(x=reorder(text, +count), y=count))+
-  ggtitle("Migren-Hastalýk Ýliþkisi")+
+  ggtitle("Migren-Sýklýk Ýliþkisi")+
   geom_bar(stat = 'identity', fill ="light blue")+
   coord_flip()+
   ylab("Frekans")+
@@ -368,7 +368,7 @@ data_kez = tibble('text' = c('ilk', 'iki'),
                    'count' = c(4,2))
 
 ggplot(data_kez, aes(x=reorder(text, +count), y=count))+
-  ggtitle("Migren-Hastalýk Ýliþkisi")+
+  ggtitle("Migren-Sýklýk Ýliþkisi")+
   geom_bar(stat = 'identity', fill ="light blue")+
   coord_flip()+
   ylab("Frekans")+
@@ -378,7 +378,7 @@ data_kotu = tibble('text' = c('cok', 'biri','bir','daha'),
                    'count' = c(12,9,8,4))
 
 ggplot(data_kotu, aes(x=reorder(text, +count), y=count))+
-  ggtitle("Migren-Hastalýk Ýliþkisi")+
+  ggtitle("Migren-Þiddet Ýliþkisi")+
   geom_bar(stat = 'identity', fill ="light blue")+
   coord_flip()+
   ylab("Frekans")+
