@@ -769,3 +769,6 @@ comparison.cloud(tdmnew, random.order=FALSE,
                  colors = c("#00B2FF", "red", "#FF0099", "#6600CC", "green", "orange", "blue", "brown"),
 title.size=1, max.words=250, scale=c(2.5, 0.4),rot.per=0.4)
 ```
+
+![kelime-bulutu](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/bulut.jpeg)
+
