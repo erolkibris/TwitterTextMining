@@ -247,32 +247,32 @@ sum.table <- rbind(sum_table,sum_table2)
   tail(sum.table,25)
 ```
 ```R
-    day  time  Freq
-168 Cmt   23 11.0000
-169 Ort   00  8.0000
-170 Ort   01  4.0000
-171 Ort   02  3.1429
-172 Ort   03  1.7143
-173 Ort   04  2.4286
-174 Ort   05  4.1429
-175 Ort   06  3.8571
-176 Ort   07  8.7143
-177 Ort   08  8.7143
-178 Ort   09 11.4286
-179 Ort   10 11.4286
-180 Ort   11 10.5714
-181 Ort   12 11.0000
-182 Ort   13 11.1429
-183 Ort   14 11.5714
-184 Ort   15 12.0000
-185 Ort   16 16.0000
-186 Ort   17 14.2857
-187 Ort   18 18.0000
-188 Ort   19 21.1429
-189 Ort   20 29.4286
-190 Ort   21 31.5714
-191 Ort   22 23.0000
-192 Ort   23 13.2857
+    day time    Freq
+168 Cmt   23 16.0000
+169 Ort   00 11.0000
+170 Ort   01  6.1429
+171 Ort   02  4.1429
+172 Ort   03  2.2857
+173 Ort   04  2.8571
+174 Ort   05  6.0000
+175 Ort   06  6.5714
+176 Ort   07 13.0000
+177 Ort   08 13.4286
+178 Ort   09 17.4286
+179 Ort   10 15.0000
+180 Ort   11 15.0000
+181 Ort   12 14.5714
+182 Ort   13 16.2857
+183 Ort   14 17.4286
+184 Ort   15 18.2857
+185 Ort   16 21.2857
+186 Ort   17 21.7143
+187 Ort   18 31.0000
+188 Ort   19 29.8571
+189 Ort   20 39.8571
+190 Ort   21 43.5714
+191 Ort   22 31.1429
+192 Ort   23 17.8571
 ```
 ## Gün-Tweet Shiny Uygulaması
 
@@ -288,13 +288,13 @@ x$hsonu <- with(x[,7:8], rowMeans(x[,7:8]))
 ```
 ```R
 head(x)
-saat Pzt Sal Car Per Cum Cmt Paz    Ort hici hsonu
-1    0  17   5  12   3   7   7   5 8.0000  8.8   6.0
-2    1   3   5   4   5   3   3   5 4.0000  4.0   4.0
-3    2   3   6   4   5   3   0   1 3.1429  4.2   0.5
-4    3   2   0   2   5   0   2   1 1.7143  1.8   1.5
-5    4   2   2   5   1   2   5   0 2.4286  2.4   2.5
-6    5   4   4   3   9   2   7   0 4.1429  4.4   3.5
+saat Pzt Sal Car Per Cum Cmt Paz     Ort hici hsonu
+1    0  17  12  15   6  10   9   8 11.0000 12.0   8.5
+2    1   5   6   7   5   5   8   7  6.1429  5.6   7.5
+3    2   4   6   6   5   5   1   2  4.1429  5.2   1.5
+4    3   3   0   2   5   1   2   3  2.2857  2.2   2.5
+5    4   2   3   6   1   2   5   1  2.8571  2.8   3.0
+6    5   6   5   7  10   4   8   2  6.0000  6.4   5.0
 ```
 
 ### Shiny Uygulaması 
@@ -722,3 +722,60 @@ ggplot(data_kotu, aes(x=reorder(text, +count), y=count))+
   xlab("Kötü")
 ```
 ![kotu-frekans](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/kotu-freq.jpeg)
+
+
+
+```R
+library(wordcloud)
+library(tm)
+library(ggplot2)
+library(syuzhet)
+library(dplyr)
+
+migren_text <- migren%>%
+  select(text)
+  
+emotions <- get_nrc_sentiment(migren_text$text)
+emo_bar = colSums(emotions)
+emo_sum = data.frame(count = emo_bar, emotion = names(emo_bar))
+emo_sum$emotion = factor(emo_sum$emotion, levels = emo_sum$emotion[order(emo_sum$count, decreasing = TRUE)])
+
+ggplot(emo_sum, aes(x=emotion, y= count))+
+  geom_bar(stat = "identity")
+
+wordcloud_tweet = c(
+  paste(migren_text$text[emotions$anger > 0], collapse=" "),
+  paste(migren_text$text[emotions$anticipation > 0], collapse=" "),
+  paste(migren_text$text[emotions$disgust > 0], collapse=" "),
+  paste(migren_text$text[emotions$fear > 0], collapse=" "),
+  paste(migren_text$text[emotions$joy > 0], collapse=" "),
+  paste(migren_text$text[emotions$sadness > 0], collapse=" "),
+  paste(migren_text$text[emotions$surprise > 0], collapse=" "),
+  paste(migren_text$text[emotions$trust > 0], collapse=" ")
+)
+
+# create corpus
+corpus = Corpus(VectorSource(wordcloud_tweet))
+
+# remove punctuation, convert every word in lower case and remove stop words
+
+corpus = tm_map(corpus, tolower)
+corpus = tm_map(corpus, removePunctuation)
+corpus = tm_map(corpus, removeWords, c(stopwords("english")))
+corpus = tm_map(corpus, stemDocument)
+
+# create document term matrix
+
+tdm = TermDocumentMatrix(corpus)
+
+# convert as matrix
+tdm = as.matrix(tdm)
+tdmnew <- tdm[nchar(rownames(tdm)) < 11,]
+
+# column name binding
+colnames(tdm) = c('anger', 'anticipation', 'disgust', 'fear', 'joy', 'sadness', 'surprise', 'trust')
+colnames(tdmnew) <- colnames(tdm)
+comparison.cloud(tdmnew, random.order=FALSE,
+                 colors = c("#00B2FF", "red", "#FF0099", "#6600CC", "green", "orange", "blue", "brown"),
+title.size=1, max.words=250, scale=c(2.5, 0.4),rot.per=0.4)
+```
