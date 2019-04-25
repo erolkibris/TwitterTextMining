@@ -26,7 +26,7 @@ server <- function(input, output, session) {
     plot.data <- melt(x, id.vars = 'saat')
     plot.data <- plot.data[plot.data$variable %in% input$gun, ]
     ggplot(data=plot.data)+
-      geom_line(mapping = aes(x=saat, y= value, colour = variable))+
+      geom_line(mapping = aes(x=saat, y= value, linetype = variable, colour = variable))+
       theme_classic()+
       scale_x_continuous(breaks = c(0:23))+
       ylab("Tweetler")+

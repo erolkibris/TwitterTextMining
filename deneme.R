@@ -64,15 +64,16 @@ sum_table <- sum_table %>%
 
 sum_table2 <- sum_table %>%
   group_by(time)%>%
-  summarise(Freq=round(mean(Freq),4)) 
+  summarize(Freq=round(mean(Freq),4)) 
 
 sum_table2$day <- "Ort"
+
+sum.table <- rbind(sum_table, sum_table2)
 
 ist <- sum(migren$location %s/% 'stanbul') 
 ank <- sum(migren$location %s/% 'Ankara')
 izm <- sum(migren$location %s/% 'zmir')
 bur <- sum(migren$location %s/% 'Bursa')
-
 
 
 cities <- data.frame("Cities" = c("Ýstanbul","Ankara", "Ýzmir", "Bursa", "Diðer"), 
@@ -234,10 +235,10 @@ ggplot(data_hafta, aes(x=reorder(text, +count), y=count))+
   ylab("Frekans")+
   xlab("Hafta")
 
-data_sure = tibble('zaman' = c(rep('Dakika',5), rep('Saat',6), rep('Gün',6),rep('Hafta',2)),
-                   'text'= c('3','5','15','20','45','1','2','3','5','7','24','1','2','3','4','Her gün','Bugün',
+data_sure = tibble('zaman' = c(rep('Dakika',5), rep('Saat',6), rep('Gün',5),rep('Hafta',2)),
+                   'text'= c('3','5','15','20','45','1','2','3','5','7','24','1','2','3','4','Bugün',
                              'Bir hafta','Ýki hafta'), 
-                   'count'=c(2,4,2,1,1,4,8,6,3,3,7,24,14,10,5,6,15,10,3))
+                   'count'=c(2,4,2,1,1,4,8,6,3,3,7,24,14,10,5,15,10,3))
 
 
 bi_disease_dis <- bi_disease%>%
