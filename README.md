@@ -11,7 +11,7 @@ Gelişen teknolojiyle birlikte ortaya çıkan sosyal medya araçları farklı di
 R programı, Twitter developer hesabına gerek kalmadan, Twitter’dan veri çekmemize imkan veriyor. Bu işlemi yapabilmemiz için öncelikli olarak bir Twitter hesabımızın olması gereklidir.
 
 ## Gerekli R Paketleri
-Öncelikli olarak kullanacağımız R paketlerini indirmemiz ve kurmamız gerekiyor. İlk etapta R rtweet paketine, Twitter’dan veri çekebilmemiz için ihtiyacımız var. Aşağıda listelenen diğer paketler ise ileriki aşamada sırasıyla ihtiyacımız olan paketler.
+İşlemlerimizi yapabilmemiz için öncelikli olarak kullanacağımız R paketlerini indirmemiz ve kurmamız gerekiyor. İlk etapta R rtweet paketine, Twitter’dan veri çekebilmemiz için ihtiyacımız var. Aşağıda listelenen diğer paketler ise ileriki aşamada sırasıyla ihtiyacımız olan ve kullandığımız paketler.
 ```R
 ## R rtweet Twitter'dan veri çekmek için 
 ## R dplyr veri düzenlemesi için
@@ -21,10 +21,10 @@ R programı, Twitter developer hesabına gerek kalmadan, Twitter’dan veri çek
 ## R plyr veri düzenlemesi için
 ## R shiny paketi uygulama için gerekli
 ## R reshape2 veriyi görselleştirmek için düzenlemede gerekli
-## R tidyr paketi kelime analizinde düzenleme için gerekli
-## R wordcloud paketi kelime bulutu yapmak için gerekli
 ## R tidytext paketi metin madenciliği için gerekli
+## R tidyr paketi kelime analizinde düzenleme için gerekli
 ## R stringr paketi istenilen kelimeleri bulmak için gerekli
+## R wordcloud paketi kelime bulutu yapmak için gerekli
 
 ## Paketlerin kurulumu
 
@@ -36,31 +36,31 @@ install.packages("lubridate")
 install.packages("plyr")
 install.packages("shiny")
 install.packages("reshape2")
-install.packages("tidyr")
-install.packages("wordcloud)
 install.packages("tidytext")
+install.packages("tidyr")
 install.packages("stringr")
-
-
+install.packages("wordcloud)
 
 ## Paketlerin aktivasyonu
 
 library(rtweet)
 library(dplyr)
+library(roperators)
+library(ggplot2)
 library(lubridate)
 library(plyr)
-library(ggplot2)
+library(shiny)
+library(reshape2)
 library(tidyr)
-library(roperators)
-library(wordcloud)
 library(tidytext)
 library(stringr)
+library(wordcloud)
 
 ```
 
 ## Migren Kelimesi Geçen Tweetleri Çekmek
 
-R rtweet paketindeki search_tweets fonksiyonu, Twitter’dan 10 gün öncesine kadar veri çekebilmemizi sağlar.
+R rtweet paketindeki search_tweets fonksiyonu, Twitter’dan 10 gün öncesine kadar veri çekebilmemizi sağlar. Biz 18 Şubat  2019-19 Mart 2019 tarihleri arasında, her 10 günde bir, içinde migren kelimesi geçen Türkçe tweetleri toplayarak bir veri tabanı oluşturduk.
 
 ```R
 ## R search_tweets fonksiyonuyla migren kelimesi geçen tweetleri migo R objesine atadım. 
@@ -79,23 +79,22 @@ migren_df <- as.data.frame(migo)
 
 ## Türkçe Tweetleri Çekme
 
-Elde ettiğimiz ham veride, farklı dillerde de migren kelimesi yer aldığını farkettik. Bu sebeple, sadece dili Türkçe olan tweetleri çekmek ve diğer gerekli bir takım sütunları (mesajın kimlik numarasını, mesajın ne zaman atıldığını, mesajın nereden atıldığını ve mesajın kendisini) çekmek için aşağıdaki kodu kullandık ve Github’da migren_tr ismiyle sakladık.
+Elde ettiğimiz ham veride, farklı dillerde de “migren” kelimesinin yer aldığını farkettik. Bu sebeple, sadece dili Türkçe olan tweetleri çekmek ve diğer gerekli bir takım sütunları (mesajın kimlik numarasını, mesajın ne zaman atıldığını, mesajın nereden atıldığını ve mesajın kendisini) çekmek için aşağıdaki kodu kullandık ve Github’da migren ismiyle sakladık.
 ```R
 ## Ham veri olan migren_df'den sadece status_id, created_at, text ve location 
 ## sütunlarını ve Türkçe tweetleri alalım
 
-migren_tr <- migren_df %>%
+migren <- migren_df %>%
   select(status_id, created_at, text, location)%>%
   filter(migren_df$lang =="tr")%>%
-  arrange(migren_tr$created_at) 
-
+  arrange(migren$created_at) 
 
 ## filter fonksiyonu, Twitter mesajlarini Turkce olanlarini seciyor
 ## arrange fonksiyonu, veriyi created_at sütununa göre, yani kronolojik 
 ## olarak artan şekilde sıralıyor.
 ```
 ## Hangi şehirde ne kadar tweet atılmış?
-Twitter'da yaşanılan yere ait şehir isim bilgisi yani konum belirtme isteğe bağlıdır. Bu sebeple, tüm kullanılara ait konum bilgisi elde etmemiz mükün olmazken, genel olarak bilinen yargı ise Twitter kullanıcıların çoğunun büyük şehirlerde yaşayan genç insanlar olduğudur. Yine bu nedenle, biz de, Türkiye’de 4 büyük şehirden migren ile ilgili ne kadar Tweet atılmış görelim istedik:
+Twitter'da yaşanılan yere ait şehir bilgisi verme, yani konum belirtme, isteğe bağlıdır. Bu sebeple, tüm kullanıcılara ait konum bilgisi elde etmemiz mükün olamazken, genel olarak bilinen yargı ise Twitter kullanıcıların çoğunun büyük şehirlerde yaşayan genç ve eğitimli insanlar olduğudur. Bu nedenle, biz de, Türkiye’de 4 büyük şehirden migren ile ilgili ne kadar Tweet atılmış görelim istedik:
 
 ```R
 ## Hangi şehirlerden ne kadar tweet atılmış
@@ -107,7 +106,7 @@ bur <- sum(migren$location %s/% 'Bursa')
 ```R
 ##cities data frame oluşturup sıklıklarını ve yüzdelerini yazıyoruz.
 cities <- data.frame("Cities" = c("İstanbul","Ankara", "İzmir", "Bursa", "Diğer"), 
-                     "Frequency" = c(ist, ank, izm, bur, dim(migren_tr)[1] - (ist+ank+izm+bur)))
+                     "Frequency" = c(ist, ank, izm, bur, dim(migren)[1] - (ist+ank+izm+bur)))
 
 cities$Perc <- round(cities$Frequency / sum(cities$Frequency)*100,4)
 
@@ -139,7 +138,7 @@ ggplot(data = cities)+
 
 ## Saat-Gün-Tweet Sayısı Verisi ve Grafiği
 
-Tweetlerin haftanın hangi günü, günün hangi saatinde atıldığına dair bir çizgi grafik çıkarmak istiyoruz. Fakat, elimizdeki veride, zamana dair sadece “created_at” değişkeni var. Burada, tarih ve saat birleşik olarak verilmiş.
+Twitter, kullanıcılarının yaşadıkları olaylara anlık olarak tepki verdikleri bir ortam olarak bilindiği için, biz de, migren hastalarının, başları ağrıdığında, anlık olarak tepkilerini Twitter’da yansıttıklarını varsayıyoruz. Bu sebeple, migren rahatsızlığı yaşayan Twitter kullanıcılarının davranışlarını incelemek için, içinde migren geçen Türkçe Tweetlerin haftanın hangi günü, günün hangi saatinde atıldığına dair bir çizgi grafik çıkararak incelemek istedik. Fakat, elimizdeki ham veride, Tweetlerin atıldığı zamana dair sadece “created_at” değişkeni var. Aşağıdaki örnekte de görüleceği gibi burada, tarih ve saat birleşik olarak verilmiş.
 
 ```R
 migren$created_at[1:10]
@@ -150,7 +149,7 @@ migren$created_at[1:10]
 [10] "2019-02-18 15:57:14 UTC"
 ```
 
-R lubridate paketi bize, “created_at” değişkeninden öncelikle saatleri çekip ve yuvarlayıp, sonrasında da, tarih kısmından saati ve günü çıkarmamıza yardımcı oluyor.
+Burada, R lubridate paketi bize, “created_at” değişkeninden öncelikle saatleri çekip ve yuvarlayıp, sonrasında da, tarih kısmından saati ve günü çıkarmamıza yardımcı oluyor.
 
 ```R
 migren$created_at <- round_date(migren$created_at, "hour", week_start = getOption("lubridate.week.start",7))
@@ -164,8 +163,7 @@ migren$day <- wday(migren$date,label = TRUE)
 ```
 
 
-Artık verimizde, hem tarih, hem gün hem de saat ayrı ayrı mevcut.
-
+Aşağıdaki örnekte de görüleceği üzere, artık verimizde, hem tarih, hem gün hem de saat ayrı ayrı mevcut.
 ```R
 head(migren[,c("date","time", "day")],10)
 
@@ -182,21 +180,7 @@ head(migren[,c("date","time", "day")],10)
 10 2019-02-18   16 Pzt
 ```
 
-
-## date, time ve day Sütunlarını Oluşturma
-```R
-## created_at sütununda veri tarih ve saat şeklinde birleşik. 
-## Saati yuvarlayıp created_at sütununa kaydettik.
-
-migren$created_at <- round_date(migren$created_at, "hour", week_start = getOption("lubridate.week.start",7))
-
-## Tarih, saat ve haftanın hangi günü olduğunu dair yeni sütunları oluşturduk.
-
-migren$date <- as.Date(migren$created_at)
-migren$time <- format(migren$created_at, "%H")
-migren$day <- wday(migren$date,label = TRUE)
-```
-Haftanın hangi gününde, saat kaçta, kaç tane tweet atıldığına dair biz çizgi grafiği elde etmek istiyoruz. Sonrasında, bu grafiği R Shiny uygulamasını kullanarak dinamik hale geritereceğiz. Bu sebeple, öncelikle, gerekli olan veriyi yani haftanın hangi gününde, hangi saatte kaç tane Tweet atıldığını çıkaralım.
+Yukarıda bahsettiğimiz gibi, haftanın hangi gününde, saat kaçta, kaç tane tweet atıldığına dair bir çizgi grafiği elde etmek istiyoruz. Sonrasında, bu grafiği R Shiny uygulamasını kullanarak dinamik hale geritereceğiz. Bu sebeple, öncelikle, gerekli olan veriyi yani haftanın hangi gününde, hangi saatte kaç tane Tweet atıldığını çıkaralım. Bunun için de R dplyr paketinden faydalandık.
 
 ```R
 sum_table <- as.data.frame(table(migren$day,migren$time))
@@ -277,6 +261,9 @@ sum.table <- rbind(sum_table,sum_table2)
 ## Gün-Tweet Shiny Uygulaması
 
 ### Shiny için Veri Düzenlemesi
+
+Yukarıda oluşturduğumuz veriyi R plyr paketinin de yardımıyla, R shiny uygulamasında kullanabilmek için tekrar düzenledik ve hafta içi hafta sonu atılan twetterin ortalmasını da yeni verimize ekledik (not: R dplyr ve plyr paketi aynı anda aktif olursa problem yaratabiliyor).
+
 ```R
 x <- data.frame(matrix(,nrow = 24, ncol = 9))
 coln <- c("saat", "Pzt", "Sal", "Car", "Per", "Cum", "Cmt", "Paz", "Ort")
@@ -298,12 +285,13 @@ saat Pzt Sal Car Per Cum Cmt Paz     Ort hici hsonu
 ```
 
 ### Shiny Uygulaması 
-Shiny kütüphanesini kullanarak dinamik grafikler elde ettik. Kullanıcıya günlere göre atılan tweetleri çizgi grafik aracılığıyla görselleştirdik. Shiny uygulaması 2 kısımdan oluşuyor. Kullanıcı arayüzü ve server kısmı. ui kısmı kullanıcının seçimleri ve grafiği gördüğü kısım, server arka planda çalışarak grafiği çizdirmek için gerekli
+Migren hastalarının davranışlarını zaman üzerinden incelemek için, R shiny paketini kullanarak, dinamik grafikler elde ettik. R Shiny uygulamasının kodu 2 kısımdan oluşuyor: kullanıcı arayüzü, diğer bir ifadeyle ui kısmı ve server kısmı. ui kısmı kullanıcı seçimlerinin ve grafiğin göründüğü kısım, server ise arka planda çalışan grafiği çizdirmek için gerekli olan kısımdır.
 
 ```R
-#shiny uygulama için gerekli
-#ggplot2 grafik için
-#reshape2 veriyi görselleştirmek için düzenlemede gerekli
+## R shiny paketi uygulama için gerekli
+## R ggplot2 grafik için
+## R reshape2 veriyi görselleştirmek için düzenlemede gerekli
+
 library(shiny)
 library(ggplot2)
 library(reshape2)
@@ -346,17 +334,54 @@ server <- function(input, output, session) {
 
 shinyApp(ui = ui, server = server)
 ```
-Bu uygulamayı bilgisayarınızda görmek için aşağıdaki komutu RStudio'da çalıştırın. Shiny kütüphanesinin aktif olmasına 
-dikkat edin.
+Bu uygulamayı bilgisayarınızda görmek için aşağıdaki komutu RStudio'da çalıştırın. Shiny kütüphanesinin aktif olmasına dikkat edin.
 
 ```R
 runGitHub("TwitterDuyguAnalizi", "erolkibris")
 ```
 
-## Migrenin Karakteristikleri
-Bu bölümde migrenin süre, etkileri, hastalıklarla ilişkisi, şiddeti ve sürekliklerini inceledik. 
+## Twwetlerde Migrenin Karakteristiklerinin İncelenmesi
+Migren, hastaların hem fiziksel hem de duygusal olarak etkileyen nörolojik bir rahatsızlıktır. En temel fizyolojik özellikleri uzun sürmesi, çok şiddetli olması, tekrar etmesi ve dolayısıyla, kişinin okul veya iş hayatını etkilemesidir.  Bu bağlamda, konu ile atılan bazı Tweetler şöyledir:
+
+```R
+migren$text[128]
+[128] "Migren ders çalışmama izin vermiyor" 
+
+migren$text[332]
+[332] "Allahım okul bende migren ağrısı yapıyor dayanamıyorum yemin ederim yaa" 
+
+migren$text[337]
+[377] "Migren yüzünden doğru düzgün yaşayamıyorum" 
+
+migren$text[440]
+[440] "Öldürmeyen Allah migren ağrısı ile sınıyor.."  
+
+migren$text[457]
+[457] "Gerginlik, stres, uykusuzluk, migren, mide bulantısı, reflü. Eklenirse yazarım." 
+
+migren$text[499]
+[499] "Sen migren ağrısı nedir bilir misin"   
+   
+migren$text[501]
+[501] "migren yüzünden hayatımı karanlık ve sessiz ortamlarda geçiriyorum yarasa gibi oldum resmen" 
+
+migren$text[556]
+[556] "Migren süründürür."  
+
+migren$text[780]
+[780] "20 dakika ders çalıştım migren ağrım başladı bünye kaldırmıyor" 
+
+
+migren$text[1928]
+[1928] "3 saattir migren ağrısından uyuyamadım bu nasıl bir şey koparın kafamı" 
+```
+
+Bu sebeple, bu bölümde ise, migren rahatsızlığıyla ilgili atılan Tweetlerden, hastaların deneyimledikleri migren ağrısının süresi, sıklığı, şiddeti hakkında ne tür bilgiler verdiklerini ve migrenin varsa diğer rahatsızlıklar ile ilişkisini tespit etmek için, metin analizi yaptık.
+
+
 ### Verinin düzenlenmesi
-migren tablosundan sadece tweetlerin olduğu sütunu alarak kelimelerine ayırıyoruz.
+Bu sebeple, migren verişinden sadece Tweet mentinlerinin olduğu sütunu çekerek kelimelerine ayırıyoruz. Bunun için R tidytext paketinden faydalanıyoruz.
+
 ```R
 #tidytext paketi gerekli
 
@@ -379,7 +404,7 @@ head(tidy_migren,10)
 2        migren
 2.1         ben
 ```
-kelimelerin frekanslarını hesapladık.
+Metinlerde en çok geçen kelimeleri bulabilmek için kelimelerin frekanslarını hesapladık.
 ```R
 kelime <- tidy_migren%>%
   count(word, sort = T)
@@ -421,28 +446,7 @@ head(bigrams,10)
 1.8         migren ben
 1.9           ben daha
 ```
-İkili kelimelerin frekanslarını hesapladık.
-```R
-bigrams_count <- bigrams %>%
-  group_by(bigram) %>%
-  count(, sort = T)
-```
-```R
-head(bigrams_count,10)
 
-   bigram            n
-   <chr>         <int>
- 1 https t.co      350
- 2 migren ağrısı   206
- 3 bu migren       120
- 4 baş ağrısı       78
- 5 migren beni      75
- 6 migren ve        70
- 7 bir migren       64
- 8 migren sen       57
- 9 ve migren        56
-10 migren var       51
-```
 İkili kelimeleri ikiye bölerek tabloya kaydettik.
 ```R
 bigrams_seperated <- bigrams%>%
@@ -463,9 +467,10 @@ head(bigrams_seperated,10)
 1.8      migren         ben
 1.9         ben        daha
 ```
-Analizini yapmak istediğimiz ikilileri 5 farklı tabloda topladık.
+Migren ile ilişkili kelime çiftlerini bulmak için, analizini yapmak istediğimiz konuları ayrı ayrı 5 farklı grupta inceledik.
+
 ```R
-#süreyle ilgili tablo
+## Süreyle ilgili tablo
 bi_sure <- bigrams_seperated%>%
   filter(str_detect(word1, "saat") | str_detect(word2, "saat") |
            str_detect(word1, "dakik") | str_detect(word2, "dakik") | 
@@ -473,47 +478,39 @@ bi_sure <- bigrams_seperated%>%
            str_detect(word1, "gün") | str_detect(word2, "gün")|
            str_detect(word1, "hafta") | str_detect(word2, "hafta"))%>%
   count(word1, word2, sort = TRUE)
-  
-#hastalıkla ilgili tablo
-bi_disease <- bigrams_seperated%>%
-  filter(str_detect(word1, "stres") | str_detect(word2, "stres")|
-           str_detect(word1, "diş") | str_detect(word2, "diş") | 
-           str_detect(word1, "kalp") | str_detect(word2, "kalp")|
-           str_detect(word1, "depresyon") | str_detect(word2, "depresyon")|
-           str_detect(word1, "uyk") | str_detect(word2, "uyk"))%>%
-  count(word1, word2, sort = TRUE)
 
-#sıklıkla alakalı tablo
+
+## Sıklıkla ilgili tablo
 bi_freq <- bigrams_seperated%>%
-  filter(str_detect(word1, "çok") | str_detect(word2, "çok") |
-           str_detect(word1, "kere") | str_detect(word2, "kere") | 
+  filter(  str_detect(word1, "kere") | str_detect(word2, "kere") | 
            str_detect(word1, "kez") | str_detect(word2, "kez") |
            str_detect(word1, "sefer") | str_detect(word2, "sefer"))%>%
   count(word1, word2, sort = TRUE)
 
-#şiddetle ilgili tablo
-bi_volume <- bigrams_seperated%>%
-  filter(str_detect(word1, "kötü") | str_detect(word2, "kötü") |
-           str_detect(word1, "ölüm") | str_detect(word2, "ölüm") | 
-           str_detect(word1, "intihar") | str_detect(word2, "intihar")|
-           str_detect(word1, "şiddet") | str_detect(word2, "şiddet")|
-           str_detect(word1, "çıldırmak")| str_detect(word2, "çıldırmak"))%>%
-  count(word1, word2, sort = TRUE)
 
-#etkisiyle ilgili tablo
-bi_effect <- bigrams_seperated%>%
-  filter(  str_detect(word1, "okul") | str_detect(word2, "okul") | 
-           str_detect(word1, "çalış") | str_detect(word2, "çalış") |
-           str_detect(word1, "sınav") | str_detect(word2, "sınav")|
-           str_detect(word1, "arkadaş") | str_detect(word2, "arkadaş")|
-           str_detect(word1, "dost") | str_detect(word2, "dost")|
-           str_detect(word1, "aile") | str_detect(word2, "aile")|
-           str_detect(word1, "anne") | str_detect(word2, "anne")|
-           str_detect(word1, "baba") | str_detect(word2, "baba")|
-           str_detect(word1, "çocuk") | str_detect(word2, "çocuk")|
-           str_detect(word1, "kardeş") | str_detect(word2, "kardeş")|
-           str_detect(word1, "sevgili") | str_detect(word2, "sevgili"))%>%
-  count(word1, word2, sort = TRUE)
+## Siddetle ilgili tablo
+oldur <- sum(migren$text %s/% 'öldür')
+inti <- sum(migren$text %s/% 'intihar')
+Sid <- sum(migren$text %s/% 'şiddet')
+
+
+
+## Hastalıkla ilgili tablo
+stres <- sum(migren$text %s/% 'stres')
+diş <- sum(migren$text %s/% 'diş')
+kalp <- sum(migren$text %s/% 'kalp')
+depresyon <- sum(migren$text %s/% 'depresyon')
+uyku <- sum(migren$text %s/% 'uyku')
+uyu <- sum(migren$text %s/% 'uyu')
+uyuy <- sum(migren$text %s/% 'uyuy')
+sinuzit <- sum(migren$text %s/% 'sinüzit')
+
+
+
+## Sosyal hayata etkisiyle ilgili tablo
+okul <- sum(migren$text %s/% 'okul')
+ders <- sum(migren$text %s/% 'ders')
+
 ```
 Dakika, saat, gün ve hafta bazındaki ikilileri ayırdık.
 ```R
@@ -550,6 +547,7 @@ head(bi_sure_dakika)
 6 5     dakika        2
 ```
 ### Grafiklerin Çizimi
+#### Migren Süresi
 ```R
 #dakikaları ve frekansları bir tabloda birleştirdik
 data_dakika = tibble('text' = c('3', '5','15','20','45'),
@@ -603,6 +601,14 @@ ggplot(data_hafta, aes(x=reorder(text, +count), y=count))+
   xlab("Hafta")
 ```
 ![hafta-frekans](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/hafta-frekans.jpeg)
+#### Migren Süresi Shiny Uygulaması
+```R
+data_sure = tibble('zaman' = c(rep('Dakika',5), rep('Saat',6), rep('Gün',5),rep('Hafta',2)),
+                   'text'= c('3','5','15','20','45','1','2','3','5','7','24','1','2','3','4','Bugün',
+                             'Bir hafta','İki hafta'), 
+                   'count'=c(2,4,2,1,1,4,8,6,3,3,7,24,14,10,5,15,10,3))
+
+```
 
 ```R
 #Shiny uygulaması Migren Süresi
@@ -643,87 +649,71 @@ server <- function(input, output, session) {
 
 shinyApp(ui = ui, server = server)
 ```
-
-
+#### Migren Sıklık
 ```R
-data_dis = tibble('text' = c('ağrı', 'sıkma'),
-                  'count' = c(15,9))
-ggplot(data_dis, aes(x=reorder(text, +count), y=count))+
-  ggtitle("Migren-Hastalık İlişkisi")+
+## Sıklık ve frekansları bir tabloda birleştirdik
+
+data_sıklık = tibble('text' = c('Her gün' ,'iki kez','7 kez'), 
+                   'count' = c (6,2,1))
+
+ggplot(data_sıklık, aes(x=reorder(text, +count), y=count))+
+  ggtitle("Migren Sıklık İlişkisi")+
   geom_bar(stat = 'identity', fill ="light blue")+
   coord_flip()+
   ylab("Frekans")+
-  xlab("Diş")
+  xlab("Sıklık")
+
 ```
-![dis-frekans](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/dis-freq.jpeg)
+![migren-sıklık](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/frekans.jpeg)
+
+#### Migren Şiddeti
 
 ```R
-data_uyku = tibble('text' = c('ağrı', 'düzen'), 
-                   'count' = c(3,4))
+## Şiddeti ve frekansları bir tabloda birleştirdik
 
-ggplot(data_uyku, aes(x=reorder(text, +count), y=count))+
-  ggtitle("Migren-Hastalık İlişkisi")+
-  geom_bar(stat = 'identity', fill ="light blue")+
-  coord_flip()+
-  ylab("Frekans")+
-  xlab("Uyku")
+data_siddet = tibble('text' = c(' öldür','intihar','şiddet'),
+                    'count' = c (97,10,18))
+
+ggplot(data_siddet, aes(x=reorder(text, +count), y=count))+
+   ggtitle("Migren Şiddet İlişkisi")+
+   geom_bar(stat = 'identity', fill ="light blue")+
+   coord_flip()+
+   ylab("Frekans")+
+   xlab("Şiddet")
 ```
-![uyku-frekans](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/uyku-freq.jpeg)
+![siddet](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/siddet.jpeg)
 
-
+#### Migren Hastalık İlişkisi
 ```R
-data_kalp = tibble('text' = c('ağrı', 'hasta'), 
-                   'count' = c(4,3))
+## Hastalıkları ve frekansları bir tabloda birleştirdik
 
-ggplot(data_kalp, aes(x=reorder(text, +count), y=count))+
-  ggtitle("Migren-Hastalık İlişkisi")+
-  geom_bar(stat = 'identity', fill ="light blue")+
-  coord_flip()+
-  ylab("Frekans")+
-  xlab("Kalp")
+data_hastalik = tibble('text' = c('stres','diş', 'kalp',  
+'depresyon','uyku', 'sinuzit'),'count' = c (41,25,14,11,92,63))
+
+ggplot(data_hastalik, aes(x=reorder(text, +count), y=count))+
+   ggtitle("Migren Hastalık İlişkisi")+
+   geom_bar(stat = 'identity', fill ="light blue")+
+   coord_flip()+
+   ylab("Frekans")+
+   xlab("Hastalık")
 ```
-![kalp-frekans](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/kalp-freq.jpeg)
+![hasta](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/hasta.jpeg)
 
+#### Migren Sosyal Hayat İlişkisi
 ```R
-data_cok = tibble('text' = c('zor', 'kötü','güzel','az','daha'), 
-                   'count' = c(13,10,8,5,14))
+## Okul vs ile ilgili kavramları ve frekansları bir tabloda birleştirdik
 
-ggplot(data_cok, aes(x=reorder(text, +count), y=count))+
-  ggtitle("Migren-Hastalık İlişkisi")+
-  geom_bar(stat = 'identity', fill ="light blue")+
-  coord_flip()+
-  ylab("Frekans")+
-  xlab("Çok")
+data_hayat = tibble('text' = c('okul','ders'),'count' = c (11,32))
+
+ggplot(data_hayat, aes(x=reorder(text, +count), y=count))+
+   ggtitle("Migren Sosyal Hayat İlişkisi")+
+   geom_bar(stat = 'identity', fill ="light blue")+
+   coord_flip()+
+   ylab("Frekans")+
+   xlab("Sosyal Hayat")
+
 ```
-![cok-frekans](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/cok-freq.jpeg)
-
-```R
-data_kez = tibble('text' = c('ilk', 'iki'), 
-                   'count' = c(4,2))
-
-ggplot(data_kez, aes(x=reorder(text, +count), y=count))+
-  ggtitle("Migren-Hastalık İlişkisi")+
-  geom_bar(stat = 'identity', fill ="light blue")+
-  coord_flip()+
-  ylab("Frekans")+
-  xlab("Kez")
-```
-![kez-frekans](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/kez-freq.jpeg)
-
-```R
-data_kotu = tibble('text' = c('cok', 'biri','bir','daha'), 
-                   'count' = c(12,9,8,4))
-
-ggplot(data_kotu, aes(x=reorder(text, +count), y=count))+
-  ggtitle("Migren-Hastalık İlişkisi")+
-  geom_bar(stat = 'identity', fill ="light blue")+
-  coord_flip()+
-  ylab("Frekans")+
-  xlab("Kötü")
-```
-![kotu-frekans](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/kotu-freq.jpeg)
-
-
+![kalp-frekans](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/shayat.jpeg)
 
 ```R
 library(wordcloud)
