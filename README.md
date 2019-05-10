@@ -716,59 +716,10 @@ ggplot(data_hayat, aes(x=reorder(text, +count), y=count))+
 ![kalp-frekans](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/shayat.jpeg)
 
 ```R
-library(wordcloud)
-library(tm)
-library(ggplot2)
-library(syuzhet)
-library(dplyr)
-
-migren_text <- migren%>%
-  select(text)
-  
-emotions <- get_nrc_sentiment(migren_text$text)
-emo_bar = colSums(emotions)
-emo_sum = data.frame(count = emo_bar, emotion = names(emo_bar))
-emo_sum$emotion = factor(emo_sum$emotion, levels = emo_sum$emotion[order(emo_sum$count, decreasing = TRUE)])
-
-ggplot(emo_sum, aes(x=emotion, y= count))+
-  geom_bar(stat = "identity")
-
-wordcloud_tweet = c(
-  paste(migren_text$text[emotions$anger > 0], collapse=" "),
-  paste(migren_text$text[emotions$anticipation > 0], collapse=" "),
-  paste(migren_text$text[emotions$disgust > 0], collapse=" "),
-  paste(migren_text$text[emotions$fear > 0], collapse=" "),
-  paste(migren_text$text[emotions$joy > 0], collapse=" "),
-  paste(migren_text$text[emotions$sadness > 0], collapse=" "),
-  paste(migren_text$text[emotions$surprise > 0], collapse=" "),
-  paste(migren_text$text[emotions$trust > 0], collapse=" ")
-)
-
-# create corpus
-corpus = Corpus(VectorSource(wordcloud_tweet))
-
-# remove punctuation, convert every word in lower case and remove stop words
-
-corpus = tm_map(corpus, tolower)
-corpus = tm_map(corpus, removePunctuation)
-corpus = tm_map(corpus, removeWords, c(stopwords("english")))
-corpus = tm_map(corpus, stemDocument)
-
-# create document term matrix
-
-tdm = TermDocumentMatrix(corpus)
-
-# convert as matrix
-tdm = as.matrix(tdm)
-tdmnew <- tdm[nchar(rownames(tdm)) < 11,]
-
-# column name binding
-colnames(tdm) = c('anger', 'anticipation', 'disgust', 'fear', 'joy', 'sadness', 'surprise', 'trust')
-colnames(tdmnew) <- colnames(tdm)
-comparison.cloud(tdmnew, random.order=FALSE,
-                 colors = c("#00B2FF", "red", "#FF0099", "#6600CC", "green", "orange", "blue", "brown"),
-title.size=1, max.words=250, scale=c(2.5, 0.4),rot.per=0.4)
+kelime <- tidy_migren%>%
+  count(word, sort = T)%>%
+  with(wordcloud(word, n, max.words = 200,random.order = FALSE,colors=brewer.pal(8, "Dark2")))
 ```
 
-![kelime-bulutu](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/bulut.jpeg)
+![kelime-bulutu](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/wordcloud.jpeg)
 
