@@ -715,6 +715,9 @@ ggplot(data_hayat, aes(x=reorder(text, +count), y=count))+
 ```
 ![kalp-frekans](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/Graphs/shayat.jpeg)
 
+#### Kelime Bulutu
+
+
 ```R
 kelime <- tidy_migren%>%
   count(word, sort = T)%>%
