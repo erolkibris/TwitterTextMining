@@ -17,6 +17,7 @@ library(stopwords)
 library(wordcloud)
 library(tidytext)
 library(stringr)
+library(tm)
 
 
 migren_tweets <- search_tweets(
@@ -107,10 +108,11 @@ tidy_migren <- migren%>%
   select(text)%>%
   unnest_tokens(word, text)
 
+#Wordcloud kodu
+
 kelime <- tidy_migren%>%
-  count(word, sort = T)
-  
-with(wordcloud(word, n, max.words = 100))
+  count(word, sort = T)%>%
+  with(wordcloud(word, n, max.words = 200,random.order = FALSE,colors=brewer.pal(8, "Dark2")))
   
 stoptr <- stopwords::stopwords("tr",source = "stopwords-iso")  
 
@@ -392,7 +394,7 @@ data_hastalik = tibble('hastalik' = c(rep('Diþ',2), rep('Kalp',2), rep('Uyku',2)
 migren_text <- migren%>%
   select(text)
 
-emotions <- get_nrc_sentiment(migren_text$text)
+emotions <- get_nrc_sentiment(migren_text$text, language="turkish")
 emo_bar = colSums(emotions)
 emo_sum = data.frame(count = emo_bar, emotion = names(emo_bar))
 emo_sum$emotion = factor(emo_sum$emotion, levels = emo_sum$emotion[order(emo_sum$count, decreasing = TRUE)])
@@ -412,13 +414,13 @@ wordcloud_tweet = c(
 )
 
 # create corpus
-corpus = Corpus(VectorSource(wordcloud_tweet))
+corpus = VCorpus(VectorSource(wordcloud_tweet))
 
 # remove punctuation, convert every word in lower case and remove stop words
 
-corpus = tm_map(corpus, tolower)
+corpus = tm_map(corpus, PlainTextDocument)
 corpus = tm_map(corpus, removePunctuation)
-corpus = tm_map(corpus, removeWords, c(stopwords("english")))
+corpus = tm_map(corpus, removeWords, c(stopwords("tr", source = "stopwords-iso")))
 corpus = tm_map(corpus, stemDocument)
 
 # create document term matrix
@@ -434,4 +436,5 @@ colnames(tdm) = c('anger', 'anticipation', 'disgust', 'fear', 'joy', 'sadness', 
 colnames(tdmnew) <- colnames(tdm)
 comparison.cloud(tdmnew, random.order=FALSE,
                  colors = c("#00B2FF", "red", "#FF0099", "#6600CC", "green", "orange", "blue", "brown"),
-                 title.size=1, max.words=250, scale=c(2.5, 0.4),rot.per=0.4)
+                 title.size=1, max.words=250, scale=c(2.5,0.4),rot.per=0.4)
+
