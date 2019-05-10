@@ -1,4 +1,4 @@
-# Twitter Duygu Analizi / Twitter Sentiment Analysis
+# Twitter Metin Madenciliği / Twitter Text Mining
 
 [English document](https://github.com/erolkibris/TwitterDuyguAnalizi/blob/master/READMEENG.md)
 
